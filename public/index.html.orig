@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Task Management System - v1.0.0</title>
+
+    <noscript>
+        <h1>
+            WARNING
+            <p />
+        </h1>
+        THIS WEB PAGE WILL NOT WORK WITHOUT JAVASCRIPT.
+    </noscript>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+
+    <link rel="stylesheet" type="text/css" href="css/project.css">
+    <link rel="stylesheet" type="text/css" href="css/flexbox.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-datepicker.css">
+
+    <link rel="stylesheet" type="text/html" href="js/bootstrap.js">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/datepair.js"></script>
+    <script type="text/javascript" src="js/jquery.datepair.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.timepicker.js"></script>
+    <script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+
+    <script type="text/javascript" src="js/project.js"></script>
+
+</head>
+
+<body>
+
+    <div class="mainFlexBlock">
+        <div class="headBlock">
+            <!-- head block include ADS bar and nav bar -->
+            <div class="headBar">
+                <div class="headLeftBlock">
+                    <div class="headLogo">
+                        <img class="logoImg" onclick="reloadCurrentPage()" title="site logo, click to reload" src="image/logo.jpg"
+                            alt="logo-imgs"></img>
+                    </div>
+                    <div class="headText">
+                        <a style="text-decoration:none" href=".">Task Management System - v1.0.0</a>
+                    </div>
+                </div>
+                <div class="headRightBlock">
+                    <div class="headNotifyLogo">
+                        <img class="logoImg" onclick="notifyDropDown()" title="show notify list" src="image/notify-on.png"
+                            alt="notify-imgs"></img>
+                    </div>
+                    <div class="xseperator">
+                    </div>
+                    <div class="headProfileLogo">
+                        <img class="logoImg" onclick="profileDropDown()" title="show profile" src="image/profile.png"
+                            alt="profile-imgs"></img>
+                    </div>
+                    <div class="xseperator">
+                    </div>
+                </div>
+            </div>
+            <!-- end ad-bar -->
+            <div class="yseperator">
+            </div>
+            <!-- message bar -->
+            <div class="messageBar" id="messageBarID">
+                <div class="messageToggle">
+                    <!-- placeholder -->
+                </div>
+                <div id="messageTextID">
+                    Welcome to TMS !!!
+                </div>
+                <div class="messageToggle">
+                    <input id="messageToggleBtnID" type="button" value="Dismiss">
+                </div>
+            </div>
+            <div class="yseperator">
+                <hr>
+            </div>
+            <!-- end message bar -->
+        </div>
+        <!-- end head -->
+        <div class="mainBodyBlock">
+            <div class="leftBlock">
+                <img class="leftBlockImg" title="left block" src="image/leftblock.png" alt="leftblock-imgs"></img>
+            </div>
+            <div class="rightBlock">
+                <div class="unscheduledBlock">
+                    <div class="unscheduledTextBlock">
+                        <div class="unscheduledText">
+                            &nbsp;&nbsp;&nbsp;&nbsp;Unscheduled Jobs
+                        </div>
+                        <div class="unscheduledToggle">
+                            <img class="yimage5x" title="unscheduledToggle" src="image/hide.jpg" alt="unscheduledToggle-imgs"></img>
+                        </div>
+                    </div>
+                    <div class="unscheduledListBlock">
+                        <table>
+                            <tr id="UnsignedList"></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="scheduledDateBlock">
+                    <div class="MidMenuBar">
+                        <div>
+                            <p id="SchName">Schedule</p>
+                            <input type="text" id="SchedDatePicker">
+                        </div>
+
+                        <!--TODO add click action-->
+                        <input id="newJobBtn" type="button" value="New Job">
+
+                    </div>
+                </div>
+                <div class="scheduledDateBlock">
+                    <!--for center, day/week/month switcher, job status-->
+                    <div class="MenuBar">
+                        <div class="MenuItem">
+                            <!--    TODO click and back to Franchiese List page, listing different center    -->
+                            <p>
+                                < Back to Franchiese</p> <h1>Canberra North</h1>
+                        </div>
+
+                        <div class="MidMenuItem">
+                            <!--TODO click different button show different page-->
+                            <button class="SwitchBtn" onclick="showSchedule(1)">Day</button>
+                            <button class="SwitchBtn" onclick="showSchedule(2)">Week</button>
+                            <button class="SwitchBtn" onclick="showSchedule(3)">Month</button>
+                        </div>
+
+                        <div class="RightMenuItem">
+                            <!--  TODO set style for "select"      -->
+                            <select>
+                                <option> Job Status </option>
+                                <option value="1"> Waiting </option>
+                                <option value="2"> Completed </option>
+                                <option value="3"> Postponed </option>
+                                <option value="4"> Assigned </option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="scheduledMatrixBlock">
+                    <div class="SchedTitleBar">
+<<<<<<< Updated upstream
+                        <table id="scheduledList">
+                        </table>
+=======
+
+                        <div id="scheduledList">
+                            <!--<tr>-->
+                                <!--<td class="SchedTitle">Assigned To</td>-->
+                                <!--<td class="SchedTitle">08:00</td>-->
+                                <!--<td class="SchedTitle">09:00</td>-->
+                                <!--<td class="SchedTitle">10:00</td>-->
+                                <!--<td class="SchedTitle">11:00</td>-->
+                                <!--<td class="SchedTitle">12:00</td>-->
+                                <!--<td class="SchedTitle">13:00</td>-->
+                                <!--<td class="SchedTitle">14:00</td>-->
+                                <!--<td class="SchedTitle">15:00</td>-->
+                                <!--<td class="SchedTitle">16:00</td>-->
+                                <!--<td class="SchedTitle">17:00</td>-->
+                                <!--<td class="SchedTitle">18:00</td>-->
+                            <!--</tr>-->
+
+                        </div>
+
+
+
+
+>>>>>>> Stashed changes
+                    </div>
+                </div>
+
+                <div id="NewJobPageLayerID" class="NewJobPageLayer">
+                    <div class="NewJobPage">
+                        <h3>Create New Job</h3>
+                        <label>Job title: </label><br />
+                        <input type="text" name="job_title" id="NewJobTitle" value="test" /><br /><br />
+
+                        <label>Job detail: </label> <br />
+                        <textarea type="text" name="detail" rows="6" style="width: 90%" id="NewJobDetail">testtest</textarea><br /><br />
+
+                        <label>Start time: </label>
+                        <div id="NewJobTime">
+
+                            <input type="text" name="start_date" class="date start" value="2018-10-16" />
+                            <input type="text" name="start_time" class="time start ui-timepicker-input" value="08:00:00"
+                                autocomplete="off">
+                        </div><br>
+
+                        <label>Duration (Mins): </label><br />
+                        <input type="number" name="duration" id="NewJobDurationID" value="60" /><br /><br />
+                        <br>
+
+                        <input type="button" name="cancel" value="Cancel" style="margin-left: 30%" id="btnNewJobCancel" />
+                        <input type="button" name="submit" value="Submit" style="margin-left: 10%" id="btnNewJobOK" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of mainBodyBlock -->
+    </div>
+    <!-- end of mainFlexBlock -->
+
+    <!-- LATER JAVASCRIPT -->
+    <!-- run JavaScript here -->
+    <script type="text/javascript" src="js/boot.js"></script>
+</body>
+
+</html>

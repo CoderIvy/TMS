@@ -1,0 +1,238 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: lightgray;
+}
+
+.loginInput {
+    width: 70%;
+    padding: 8px 10px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: medium;
+}
+
+.LoginBtn {
+    font-size: medium;
+    color: black;
+    padding: 14px 10px;
+    margin: 10px;
+    cursor: pointer;
+    width: 38%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+#LoginTitle {
+    text-align: center;
+}
+
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+.SchedTitleBar {
+    background-color: white;
+    width: 98%;
+    height: 30px;
+    /*padding: 10px;*/
+    margin-left: 1%;
+}
+
+.SchedTitle {
+    display: inline-block;
+    width: 8%;
+    border-bottom: 1px solid lightgray;
+    /*text-align: center;*/
+}
+
+.SchedUserJobBg {
+    display: inline-block;
+    width: 8%;
+    height: 100px;
+    background-color: #c7f4ae;
+    border-left: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    /*text-align: center;*/
+}
+
+.SchedJobBg {
+    display: inline-block;
+    width: 4%;
+    height: 100px;
+    background-color: white;
+    border-left: 0.1px solid lightgray;
+    border-bottom: 0.1px solid lightgray;
+    border-collapse: collapse;
+    margin: 0px;
+    padding: 0px;
+    /*border: 0.5px solid lightgray;*/
+    /*text-align: center;*/
+}
+
+.SchedJobDiv {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-color: #59b12a;
+    margin: 0px;
+    padding: 0px;
+    /*border: 0px solid lightgray;*/
+    z-index: 8;
+    /*text-align: center;*/
+    white-space: nowrap;
+}
+
+.SchedJobExtDiv {
+    z-index: 6;
+}
+
+.SchedNameTag {
+    height: 10px;
+    font-size: smaller;
+}
+
+.SchedJob {
+    background-color: lightpink;
+    margin: 0px;
+    /*width: max-content;*/
+    /*padding-right: 40px;*/
+    /*padding-bottom: 5px;*/
+    /*padding-left: 10px;*/
+    /*display: inline-block;*/
+    border-left: 2px solid gray;
+}
+
+hr {
+    margin-left: 10px;
+    color: gray;
+}
+
+.UnsignTag {
+    height: 5px;
+    font-size: smaller;
+}
+
+.UnsignTitle {
+    height: 5px;
+    font-size: smaller;
+    font-weight: bold;
+}
+
+.NewJobPageLayer {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(194, 178, 178);
+    padding: 0;
+    z-index: 90;
+}
+
+.NewJobPage {
+    display: block;
+    width: 45%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: lightgray;
+    padding: 20px;
+    height: max-content;
+    z-index: 99;
+}
+
+.NewJobTime {
+    width: 30%;
+}
+
+.LoginPageLayer {
+    /*display: none;*/
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(194, 178, 178);
+    padding: 0;
+    z-index: 90;
+    flex-direction: column;
+}
+
+.LoginPage {
+    /*display: block;*/
+    width: 40%;
+    /*position: relative;*/
+    /*margin: auto;*/
+    margin-top: 5%;
+    margin-left: 30%;
+    margin-bottom: 5%;
+    background-color: lightgray;
+    padding-left: 8%;
+    height: max-content;
+    z-index: 99;
+}
+
+.tmsTips{
+    width: 100%;
+    display: flex;
+    position: relative;
+    /*margin: auto;*/
+    /*top: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+    /*background-color: lightgray;*/
+    padding-left: 1%;
+    height: max-content;
+    z-index: 99;
+    flex-direction: column;
+}
+
+.otherPage {
+    width: 50%;
+    /*height: 80%;*/
+    align-content: center;
+    margin: 20%;
+}
+
+.LoadingLayer {
+    display: flex;
+    width: 60%;
+    height: 60%;
+    position: absolute;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(215, 255, 246);
+    padding: 0;
+    z-index: 99;
+}
+
+.LoadingImg {
+    display: flex;
+    width: 15vw;
+    height: 15vw;
+}

@@ -1,0 +1,617 @@
+/* jshint browser: true */
+/* global window: false */
+
+// need for jslint, to allow the browser globals available
+// https://stackoverflow.com/questions/1853473/should-i-worry-about-window-is-not-defined-jslint-strict-mode-error
+
+
+"use strict";
+
+
+/**
+ * for datepicker
+ */
+$(function () {
+<<<<<<< Updated upstream
+    $("#SchedDatePicker").datepicker('setDate', 'today').datepicker({ dateFormat: 'dd-mm-yy' }).on('changeDate', function (event) {
+=======
+    $("#SchedDatePicker").datepicker('setDate', 'today').datepicker({dateFormat: 'dd-mm-yy'}).on('changeDate', function (ev) {
+>>>>>>> Stashed changes
+        $(this).datepicker('hide');
+    });
+    ;
+});
+
+// global var for joblist
+var userJobList = new Map();
+var uidList = [];
+var selDate;
+var selTs;
+var stepTs
+
+function append_joblist(data, doclear) {
+
+    if (data !== null) {
+        //check data is valid
+        if (checkData(data, doclear) === false) {
+            return;
+        }
+
+        mergeJobByUid(data);
+    }
+
+    //draw scheduled joblist box
+    drawTableTitle();
+
+    // get current selected date time
+    selDate = $("#SchedDatePicker").val();
+
+    var selTime = "08:00";
+
+    // "17-10-2018 08:00"
+    var selDateObj = dateTimeObject(selDate + " " + selTime);
+
+    if (selDateObj == null) {
+        return;
+    }
+
+    /** Gets the time value in milliseconds. */
+    selTs = selDateObj.getTime();
+
+    // 30 minutes
+    stepTs = 30 * 60 * 1000;
+
+    // global uidList sort by uid
+    uidList.sort();
+
+    var count = 0;
+
+    // draw unsigned jobs
+    count += drawByUID(0);
+
+    for (const uid of uidList) {
+
+        count += drawByUID(uid);
+
+    }
+
+    console.log("draw " + count + " job list done for " + getFunName());
+}
+
+// draw jobs by uid
+function drawByUID(uid) {
+
+    uid = uid + "";
+
+    var count = 0;
+
+    //by default, unsigned job's user id = 0
+    var tmpList = userJobList.get(uid);
+
+    var jobCount = 0;
+    if (tmpList !== undefined) {
+        jobCount = tmpList.size;
+    }
+
+    if (uid == 0) {
+        if (tmpList === undefined) {
+            return count;
+        }
+        for (const jobId of tmpList.keys()) {
+            count += 1;
+            var aJob = tmpList.get(jobId);
+            var divID = 'pos_' + uid + '_' + 0 + '_' + jobId;
+            $('#UnsignedList').append('<div draggable="true" ondragstart="Unassigned_drag(event)" class="UnsingedJob" id="' + divID + '"><p class="UnsignTag">' + aJob.job_status + '</p><p class="UnsignTitle">' + aJob.job_title + '</p><p class="UnsignTag">' + aJob.detail + '</p></div>');
+        }
+    } else {
+
+        //    TODO get user info, currently use user ID instead
+        var tid = 'tid_' + uid;
+
+        var countId = 'count_' + uid;
+        //show staff info
+        $('#scheduledList').append('<tr id="' + tid + '"><td class="SchedUserJobBg"><img src="image/profile.png" class="SchedAvatar"/><div class="SchedAvatar"><p class="SchedNameTag">' + uid + '</p>' +
+            '<p class="SchedNameTag" id="' + countId + '">' + jobCount + 'Jobs</p></div></td></tr>');
+
+        tid = "#" + tid;
+        //draw scheduled job list bg
+        for (var col = 0; col < 22; col++) {
+            var cellID = 'td_' + uid + '_' + col + '_0';
+            $(tid).append('<td class="SchedJobBg" ondrop="drop(event)" ondragover="allowDrop(event)" id="' + cellID + '"></td>');
+
+            //available slots
+            var divID = 'pos_' + uid + '_' + col + '_0';
+            $('#' + cellID).html('<div class="Sched" id="' + divID + '"></div>');
+        }
+
+        if (tmpList === undefined) {
+            return count;
+        }
+
+        //TODO only draw today's joblist
+        for (const jobId of tmpList.keys()) {
+
+            count += drawJobBox(uid, jobId);
+
+        }
+
+    }
+    return count;
+}
+
+/**
+ * for unsigned jobs row
+ */
+
+$(document).ready(function () {
+
+    $("#logoutImgID").click(function () {
+        apiLogout();
+    });
+
+    $("#messageToggleBtnID").click(function () {
+        hideMessageBar();
+    });
+
+    //TODO set start_time - duration < 18:00
+    $("#newJobBtn").click(function () {
+        $("#NewJobPageLayerID").css("display", "block");
+        $("#NewJobPageLayerID").show();
+    });
+
+    // default to hide, show after login
+    $("#logoutHeadID").css("display", "none");
+    $('#logoutHeadID').hide();
+
+    /**
+     * cancel click when adding a new job
+     */
+    $('#btnNewJobCancel').click(function (event) {
+        $("#NewJobPageLayerID").css("display", "none");
+        $('#NewJobPageLayerID').hide();
+    });
+
+    //
+
+    $("#btnDoLogin").click(function (event) {
+        postLogin(event);
+    });
+
+    //
+    $("#jobStatusFilterID").change(function (event) {
+        setJobStatusFilter(event);
+    });
+
+    //
+    getjoblist("Welcome to TMS !!!");
+
+});
+
+
+
+// merge jobs by uid
+function mergeJobByUid(socData) {
+    $.each(socData, function (index, value) {
+
+        var uid = value.user_id;
+
+        if (userJobList.has(uid) === false) {
+            userJobList.set(uid, new Map())
+        }
+
+        var joblist = userJobList.get(uid);
+
+        joblist.set(value.job_id, value);
+
+        userJobList.set(uid, joblist);
+
+    });
+}
+
+
+/**
+ * draw scheduled job list title
+ */
+function drawTableTitle() {
+    // clear before renew
+    $('#UnsignedList > div').remove();
+
+    $('#scheduledList').empty();
+
+    $('#scheduledList').append(`<tr>
+                                <td class="SchedTitle">Assigned To</td>
+                                <td class="SchedTitle">08:00</td>
+                                <td class="SchedTitle">09:00</td>
+                                <td class="SchedTitle">10:00</td>
+                                <td class="SchedTitle">11:00</td>
+                                <td class="SchedTitle">12:00</td>
+                                <td class="SchedTitle">13:00</td>
+                                <td class="SchedTitle">14:00</td>
+                                <td class="SchedTitle">15:00</td>
+                                <td class="SchedTitle">16:00</td>
+                                <td class="SchedTitle">17:00</td>
+                                <td class="SchedTitle">18:00</td>
+                            </tr>`);
+
+}
+
+
+/**
+ * draw scheduled job box
+ * @param aJob
+ */
+function drawJobBox(curUid, curJobId) {
+
+    var tmpList = userJobList.get(curUid);
+
+    if (tmpList === undefined) {
+        return 0;
+    }
+
+    var aJob = tmpList.get(curJobId);
+
+    if (aJob === undefined) {
+        return 0;
+    }
+
+    if (jobStatusFilter.size > 0) {
+        var curStatus = aJob.job_status.toUpperCase();
+
+        var all = jobStatusFilter.has("ALL");
+        var cur = jobStatusFilter.has(curStatus);
+
+        if (jobStatusFilter.has("ALL") === false && jobStatusFilter.has(curStatus) === false) {
+            return 0;
+        }
+    }
+
+    var start_time = aJob['start_time'];
+
+    // for debug: force to today
+    var start_time_parts = start_time.split(' ');
+
+    var start_column = getStartCol(aJob);
+
+    var finish_column = getFinishCol(aJob, start_column);
+
+    var divHtml = start_time_parts[1] + '<br />' + aJob.job_title;
+
+
+    for (var i = start_column; i < finish_column; i++) {
+
+        var divID = 'pos_' + curUid + '_' + i + '_' + curJobId;
+
+        var jCellID = '#td_' + curUid + '_' + i + '_0';
+
+        //job div box
+        if (i === start_column) {
+
+            $(jCellID).html('<div class="SchedJobDiv"  draggable="true" ondragstart="drag(event)" id="' + divID + '">' + divHtml + '</div>');
+
+        } else {
+            $(jCellID).html('<div class="SchedJobDiv SchedJobExtDiv"  id="' + divID + '"></div>');
+
+        }
+
+    }
+    return 1;
+}
+
+
+/**
+<<<<<<< Updated upstream
+ * get start column by current job
+ * @param curJob
+ * @param start_col
+ * @returns {*}
+ */
+function getStartCol(curJob) {
+    var start_time = curJob['start_time'];
+
+    // for debug: force to today
+    var start_time_parts = start_time.split(' ');
+
+    start_time = selDate + " " + start_time_parts[1];
+
+    // "17-10-2018 08:00"
+    var jobDateObj = dateTimeObject(start_time, false)
+
+    // "2018-10-17 08:00"
+    // var jobDateObj = dateTimeObject(start_time, true)
+
+    if (jobDateObj == null) {
+        console.error("job#" + uid + ", invalid start_time format: " + start_time);
+        // continue;
+        return;
+    }
+
+    var jobTs = jobDateObj.getTime();
+
+    //job start_time - 8:00, get div start point
+    var tsOffset = jobTs - selTs;
+
+    // 9:00 - 8:00 = 1 h, 1h / 30mins
+    var floatCol = tsOffset / stepTs;
+
+    //get real start start_column
+    var start_col = Math.ceil(floatCol);
+
+    return start_col;
+}
+
+/**
+ * get finish column by current job and start_column
+ * @param curJob
+ * @param start_col
+ * @returns {*}
+ */
+function getFinishCol(curJob, start_col) {
+
+    var duration = curJob['duration'];
+
+    //job time box
+    var durationPos = duration * 60 * 1000 / stepTs;
+
+    var finish_col = Math.ceil(durationPos) + Number(start_col);
+
+    return finish_col;
+}
+
+
+//TODO clear old data
+function clearOldJobbox(oldDivID) {
+    console.log("clearOldJobbox: " + oldDivID);
+    var divIDinfo = getIdInfos(oldDivID);
+    var curUid = divIDinfo[1];
+    if (curUid == 0) {
+        return;
+    }
+    var curCol = Number(divIDinfo[2]);
+    var curJobId = divIDinfo[3];
+    var tempList = userJobList.get(curUid);
+    var aJob = tempList.get(curJobId);
+
+    var finish_col = getFinishCol(aJob, Number(curCol));
+
+
+    for (var i = curCol + 1; i < finish_col; i++) {
+        var divID = 'pos_' + curUid + '_' + i + '_' + 0;
+
+        var jCellID = '#td_' + curUid + '_' + i + '_0';
+
+        // //job div box
+        // if (i === start_column){
+        //
+        //     $(jCellID).html('<div class="SchedJobDiv"  draggable="true" ondragstart="drag(event)" id="' + divID + '">' + divHtml + '</div>');
+        // }else {
+        $(jCellID).html('<div class="SchedJobBg" ondrop="drop(event)" ondragover="allowDrop(event)"  id="' + divID + '"></div>');
+
+        // }
+    }
+
+}
+
+/**
+ * get current div's user id, column, job_id
+ * @param curDivId
+ */
+function getIdInfos(curDivId) {
+
+    var divIDinfo = curDivId.split('_');
+    return divIDinfo;
+
+}
+
+
+/**
+=======
+>>>>>>> Stashed changes
+ * drag and drop
+ */
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drag(event) {
+    console.log("Assigned_drag div's id = " + event.target.id);
+    event.dataTransfer.setData("text", event.target.id);
+    /**
+ * 1. drag start set class style as scheduled div
+ * 2. drag start clear the rest job duration boxes's style
+ * 3. set user_id and column_id = 0. div_id = uid_colId_jobId
+ * 4. set jobstatus = unsign
+ */
+
+<<<<<<< Updated upstream
+    //when jobbox start drag, clear data according the user_id and column_id
+    clearOldJobbox(event.target.id);
+    return;
+}
+
+function Unassigned_drag(event) {
+    console.log("Unassigned_drag div's id = " + event.target.id);
+    event.dataTransfer.setData("text", event.target.id);
+    /**
+ * 1. drag start set class style as scheduled div
+ * 2. drag start clear the rest job duration boxes's style
+ * 3. set user_id and column_id = 0. div_id = uid_colId_jobId
+ * 4. set jobstatus = unsign
+ */
+=======
+    var divInfos = getIdInfos(ev.target.id);
+
+
+    if (Number(divInfos[1]) != 0) {
+
+        //when jobbox start drag, clear data according the user_id and column_id
+        clearOldJobbox(ev.target.id);
+    }
+>>>>>>> Stashed changes
+
+    //when jobbox start drag, clear data according the user_id and column_id
+    clearOldJobbox(event.target.id);
+    return;
+}
+
+<<<<<<< Updated upstream
+function drop(event) {
+    event.preventDefault();
+    var destDiv = event.target.id;
+    var oldDivId = event.dataTransfer.getData("text");
+    if (typeof (event.target) != "object") {
+        return;
+    }
+=======
+function drop(ev) {
+    ev.preventDefault();
+    var destDiv = ev.target.id;
+    var oldDivId = ev.dataTransfer.getData("text");
+
+    if (typeof (ev.target) != "object") {
+        return;
+    }
+    ev.target.appendChild(document.getElementById(oldDivId));
+    // ev.target.appendChild(document.getElementById(ev.target.id));
+>>>>>>> Stashed changes
+
+    console.log("drop into div: " + destDiv);
+    /**
+     * 1. set job status = assigned
+     * 2. set user_id = new user_id
+     * 3. div_id = newuid_newcolId_jobID
+     * 4. set AJAX newJobRequest to DB update data
+     * 5. draw job_duration_boxes according to duration
+     * 6. update job's counts
+     */
+
+
+    /**
+     * 1. use current div info get cell id, draw new jobbox
+     * 2. use coming div info get job detail
+     * @type {string}
+     */
+
+    var destDivInfo = getIdInfos(destDiv);
+
+    var oldDivInfo = getIdInfos(oldDivId);
+    var oldUid = oldDivInfo[1];
+    var jobId = oldDivInfo[3];
+    var destUid = destDivInfo[1];
+
+    var start_col = destDivInfo[2];  //dest col number
+<<<<<<< Updated upstream
+    var srcJobs = userJobList.get(oldUid); //get dropping user job list
+    var cur_job = srcJobs.get(jobId); //get dropping job detail
+    var start_time = cur_job.start_time;
+    var start_time_parts = start_time.split(' ');
+=======
+
+    var tempList = userJobList.get(oldUid); //get dropping user job list
+    var cur_job = tempList.get(jobId); //get dropping job detail
+>>>>>>> Stashed changes
+
+/*
+    //update job to new user list
+    var destJobs = userJobList.get(destUid);
+    if (destJobs === undefined) {
+        destJobs = new Map();
+    }
+    destJobs.set(jobId, cur_job);
+
+    //update new userlist to total userlist
+    userJobList.set(destUid, destJobs);
+
+    //remove changed job from old user job list
+<<<<<<< Updated upstream
+    srcJobs.delete(jobId);
+    userJobList.set(oldUid, srcJobs);
+=======
+    tempList.delete(jobId);
+    userJobList.set(oldUid, tempList);
+
+    */
+>>>>>>> Stashed changes
+
+    var finish_col = getFinishCol(cur_job, start_col);
+
+    for (var i = Number(start_col); i < Number(finish_col); i++) {
+
+        var divID = 'pos_' + destUid + '_' + i + '_' + jobId;
+
+        var jCellID = '#td_' + destUid + '_' + i + '_0';
+
+
+
+
+        if (i === Number(start_col)) {
+
+
+            var new_start_time = getNewStartTime(start_col);
+            var start_time_parts = new_start_time.split(' ');
+
+            var divHtml = start_time_parts[1] + '<br />' + cur_job.job_title;
+
+            $(jCellID).html('<div class="SchedJobDiv"  draggable="true" ondragstart="drag(event)" id="' + divID + '">' + divHtml + '</div>');
+
+            var jobStatus = "assigned";
+
+            if (cur_job.job_status != undefined && cur_job.job_status !== "unsigned") {
+                jobStatus = cur_job.job_status;
+            }
+
+
+            var newCount = "count_" + destUid;
+            var oldCount = "count_" + oldUid;
+<<<<<<< Updated upstream
+            document.getElementById(newCount).innerHTML = '<p class="SchedNameTag">' + destJobs.size + 'Jobs</p>';
+            if (oldUid != 0) {
+                document.getElementById(oldCount).innerHTML = '<p class="SchedNameTag">' + srcJobs.size + 'Jobs</p>';
+            }
+=======
+            document.getElementById(newCount).innerHTML = '<p class="SchedNameTag">' + Number(userJobList.get(destUid).size) + 'Jobs</p>';
+            document.getElementById(oldCount).innerHTML = '<p class="SchedNameTag">' + Number(userJobList.get(oldUid).size) + 'Jobs</p>';
+>>>>>>> Stashed changes
+
+            //TODO update uoserJobList info, update start time info, un-allow drop area
+            var newTemp = userJobList.get(destUid);
+            if (newTemp === undefined) {
+                newTemp = new Map();
+            }
+
+            // var new_start_time_obj =
+
+
+            cur_job.user_id = destUid;
+            cur_job.job_status = jobStatus;
+            cur_job.start_time = new_start_time;
+
+            newTemp.set(jobId, cur_job);
+
+            //update new userlist to total userlist
+            userJobList.set(destUid, newTemp);
+
+            //remove changed job from old user job list
+            tempList.delete(jobId);
+            userJobList.set(oldUid, tempList);
+
+            var updateInfo = {"job_id": jobId, "user_id": destUid, "job_status": jobStatus, "start_time":new_start_time};
+
+            updateJob(updateInfo);
+
+        } else {
+
+            //TODO re-draw jcellid.parent , set un-allow drop
+
+            $(jCellID).html('<div class="SchedJobDiv" onmousedown="return false" id="' + divID + '"></div>');
+
+        }
+
+    }
+
+    oldDivId = "#" + oldDivId;
+
+    $(oldDivId).remove();
+
+}
+

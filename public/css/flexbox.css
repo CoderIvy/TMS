@@ -1,0 +1,985 @@
+/* flexbox for div */
+
+body {
+    /* http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html */
+    /* https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+    /* display: flex; */
+    /* This defines a flex container; inline or block depending on the given value. It enables a flex context for all its direct children. */
+    display: flex;
+    position: static;
+    /* */
+    flex-direction: row;
+    flex-wrap: nowrap;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    /*align-items: center;*/
+    width: 99.6%;
+    /* use vw for body height, and the height change base on width */
+    /* all children can use percentage height */
+    /* height: 900vw; */
+    margin: 0;
+    padding: 0;
+    margin-left: 0.2%;
+    margin-top: 0.2%;
+    background-color: white;
+    /* default font-size for body */
+    font-size: 0.8vw;
+    flex-direction: column;
+}
+
+.yimage {
+    /* important to control the logo image size */
+    max-height: 100%;
+}
+
+.ximage {
+    /* important to control the logo image size */
+    max-width: 100%;
+}
+
+.yimage5x {
+    /* important to control the logo image size */
+    max-height: 500%;
+}
+
+.ximage5x {
+    /* important to control the logo image size */
+    max-width: 500%;
+}
+
+.yseperator {
+    display: flex;
+    /* horizontal align */
+    justify-content: center;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 1%;
+    /*border: 0px solid #e6e6e6;*/
+    margin: 0px;
+    /*background-color: #9BC0A3;*/
+}
+
+.mainFlexBlock {
+    width: 99.6%;
+    /* height is needed here */
+    height: 100%;
+    /*border: 1px solid #4E2FFF;*/
+    margin: 0px;
+    padding: 0px;
+    /* default to none, will change to flex by david canvas engine */
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    /*align-items: center;*/
+    position: relative;
+    flex-direction: column;
+}
+
+.headBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: flex-start;
+    position: relative;
+    width: 100%;
+    /* head block height shoud not use percent, use vw */
+    height: 2vw;
+    /*border: 0px solid red;*/
+    margin: -1px;
+    background-color: white;
+    /* vertical list */
+    flex-direction: column;
+}
+
+.headBar {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 60%;
+    /*border: 0px solid #0F9430;*/
+    margin: 0px;
+    /* same color as the background color of green bug image */
+    background-color: white;
+}
+
+.messageBar {
+    display: none;
+    /* horizontal align */
+    justify-content: center;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 0px;
+    /*border: 0px solid #940F2C;*/
+    margin: 0px;
+    /* color: red; */
+
+    color: green;
+    background-color: white;
+    font-size: 1vw;
+}
+
+.messageToggle {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-end;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 5%;
+    height: 80%;
+    /*border: 0px solid #940F2C;*/
+    margin-left: 0.5vw;
+    /* color: red; */
+    color: green;
+    background-color: white;
+    font-size: 0.4vw;
+}
+
+.headLeftBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: flex-start;
+    position: relative;
+    width: 85%;
+    height: 100%;
+    background-color: white;
+    /*border: 0px solid red;*/
+    margin: 0px;
+}
+
+.headLogo {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: flex-start;
+    position: relative;
+    /* width must according to logo image width */
+    width: 4%;
+    height: 100%;
+    /*border: 0px solid #8B940F;*/
+    margin: 0px;
+    /*background-color: #EAD099;*/
+}
+
+.headRightBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-end;
+    /* vertical align */
+    align-items: center;
+    padding-right: 2%;
+    position: relative;
+    width: 15%;
+    height: 100%;
+    /*border: 0px solid red;*/
+    background-color: white;
+    margin: 0px;
+}
+
+.xseperator {
+    display: flex;
+    /* horizontal align */
+    justify-content: center;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 5%;
+    height: 100%;
+    /*border: 0px solid #940F2C;*/
+    margin: 0px;
+}
+
+.headNotifyLogo {
+    display: inline-flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    /* width must according to logo image width */
+    width: 40%;
+    height: 100%;
+    /*border: 0px solid #8B940F;*/
+    margin: 0px;
+    /*background-color: #EAD099;*/
+}
+
+.headProfileLogo {
+    display: inline-flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    /* width must according to logo image width */
+    /* width: 40%; */
+    height: 100%;
+    /*border: 0px solid #8B940F;*/
+    margin: 0px;
+    background-color: white;
+}
+
+.loginLogoutHead {
+    display: inline-flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    /* width must according to logo image width */
+    /* width: 40%; */
+    height: 100%;
+    /*border: 0px solid #8B940F;*/
+    margin: 0px;
+    background-color: white;
+}
+
+.logoImg {
+    /* important to control the logo image size */
+    max-height: 100%;
+    /*background-color: #EAD099;*/
+    cursor: pointer;
+    margin-left: 50%;
+    /*margin-right: 80%;*/
+
+}
+
+.headText {
+    display: inline-flex;
+    /* horizontal align */
+    justify-content: center;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 96%;
+    height: 100%;
+    /*border: 0px solid #8B940F;*/
+
+    margin: 0px;
+    /* auto font-size: https://css-tricks.com/viewport-sized-typography/ */
+    font-size: 1vw;
+    background-color: white;
+}
+
+.mainBodyBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: center;
+    /* vertical align */
+    align-items: flex-start;
+    position: relative;
+    width: 100%;
+    margin: 0px;
+    background-color: white;
+}
+
+.leftBlock {
+    /* border: 1px solid #940F2C; */
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: left;
+    position: relative;
+    flex-direction: column;
+    padding-left: 1%;
+    padding-top: 1.3%;
+    /*padding-bottom: 0.2%;*/
+    width: 14%;
+    height: 100%;
+    background-color: white;
+    /* border-right: 0.3px solid #4E2FFF; */
+}
+
+.leftBlockImg {
+    /* important to control the logo image size */
+    max-width: 100%;
+}
+
+.rightBlock {
+    /*border-left: 1px solid #4E2FFF;*/
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 86%;
+    height: 100%;
+    background-color: #e6e6e6;
+    /* vertical list */
+    flex-direction: column;
+    font-size: 1vw;
+}
+
+.unassignedBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    flex-direction: column;
+    width: 97%;
+    min-height: 5vw;
+    margin-top: 1.5%;
+    background-color: white;
+}
+
+.unassignedTextBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 3%;
+    /*margin-top: 0.2%;*/
+    background-color: white;
+    color: rgba(52, 52, 52, 0.80);
+
+}
+
+.unassignedListBlock {
+    display: flex;
+    flex: 0 0 auto;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 70%;
+    background-color: white;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    /*margin-top: 1%;*/
+    /*margin-bottom: 0.1%;*/
+    font-size: 1vw;
+    /*overflow-x: scroll;*/
+    overflow-y: hidden;
+}
+
+.unassignedText {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    background-color: white;
+    align-items: center;
+    position: relative;
+    width: 70%;
+    height: 100%;
+    font-size: 1vw;
+}
+
+.unassignedToggle {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-end;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    background-color: white;
+    width: 30%;
+    height: 90%;
+    margin-right: 0.5%;
+}
+
+.unassignedJob {
+    background-color: #e6e6e6;
+    display: flex;
+    margin: 0px;
+    max-width: 16vw;
+    width: 180px;
+    height: 6vw;
+    padding-left: 5px;
+    padding-right: 30px;
+    border-left: 3px solid gray;
+    flex-direction: column;
+    /*font-size: 1vw;*/
+    font-size: smaller;
+    flex: 0 0 auto;
+    overflow: visible;
+}
+
+.unassignedJobStatus {
+    display: flex;
+    margin: 0px;
+    width: fit-content;
+    height: fit-content;
+    flex: 0 0 auto;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.unassignedJobTitle {
+    display: flex;
+    margin: 0px;
+    width: fit-content;
+    height: fit-content;
+    flex: 0 0 auto;
+    font-size: 1vw;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.unassignedJobDetail {
+    display: flex;
+    margin: 0px;
+    width: fit-content;
+    height: fit-content;
+    flex: 0 0 auto;
+    overflow: hidden;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.scheduledDateBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 6vw;
+    font-size: 1vw;
+}
+
+.scheduledMatrixBlock {
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    flex-direction: column;
+    background-color: white;
+    margin-bottom: 1.5%;
+    width: 97%;
+}
+
+.dayMatrixBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    margin-top: -1px;
+    /* vertical align */
+    /*align-items: center;*/
+    position: relative;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+    width: 100%;
+}
+
+/* filterDrop down support */
+
+.filterbar {
+    display: flex;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.filterbar a {
+    float: right;
+    text-align: center;
+    text-decoration: none;
+}
+
+.filterDropdown {
+    float: right;
+    overflow: hidden;
+    width: 100%;
+    background-color: #e6e6e6;
+    /*align-content: right;*/
+}
+
+.filterDropdown .filterDropbtn {
+    background-color: inherit;
+    width: 100%;
+    text-align: left;
+}
+
+.filterbar a:hover, .filterDropdown:hover .filterDropbtn {
+    /*background-color: #effce9;*/
+    width: 100%;
+}
+
+.filterDropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    /*right: 2%;*/
+    color: rgba(52, 52, 52, 0.80);
+    width: 100%;
+}
+
+.filterDropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    width: 100%;
+    text-align: left;
+}
+
+.filterDropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.filterDropdown:hover .filterDropdown-content {
+    display: flex;
+}
+
+#jobStatusFilterID{
+    width: 100%;
+}
+
+/* end of filterDrop down support */
+
+.LoginMessage {
+    display: flex;
+    /*background-color: rgb(209, 242, 243);*/
+    text-align: left;
+    height: max-content;
+    width: 70%;
+    padding-right: 3%;
+}
+
+.dayViewHead {
+    display: flex;
+    border-bottom: 1px solid #e6e6e6;
+    background-color: white;
+    height: max-content;
+    width: 100%;
+    min-height: 2vw;
+    position: relative;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.dayViewHeadTitle {
+    display: flex;
+    flex: 0 0 14.26%;
+    border-right: 1px solid #e6e6e6;
+    height: max-content;
+    padding-left: 1%;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.dayViewLines {
+    display: flex;
+    width: 100%;
+    position: relative;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.dayViewOneLine {
+    display: flex;
+    border-bottom: 1px solid #e6e6e6;
+    width: 100%;
+    height: 5vw;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.miniFlexBox {
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+}
+
+.maxFlexBox {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    font-size: small;
+    font-weight: bold;
+    position: relative;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+
+.maxFlexBoxCount {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    font-size: smaller;
+    position: relative;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.dayViewUserTitle {
+    display: flex;
+    /* to match dayViewHeadTitle */
+    flex: 0 0 14.26%;
+    border-right: 1px solid #e6e6e6;
+    height: 100%;
+    padding-left: 0.4%;
+    position: relative;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.dayViewUserTitleImg {
+    display: flex;
+    height: fit-content;
+    width: 15%;
+    margin-left: 5%;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    line-height: 1;
+    font-size: 110%;
+    top:10%;
+}
+
+.SchedAvatar {
+
+    /* height: 100%; */
+    width: 100%;
+    display: flex;
+}
+
+.dayViewUserTitleText {
+    display: inline-flex;
+    height: fit-content;
+    top: 10%;
+    width: 80%;
+    margin-left: 5%;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    /*align-items: flex-start;*/
+    line-height: 1;
+    font-size: 110%;
+}
+
+.dayViewUserTitleDel{
+    display: inline-flex;
+    height: fit-content;
+    top: 5%;
+    width: 5%;
+    margin-right: 5%;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    /*align-items: flex-start;*/
+    line-height: 1;
+    font-size: 150%;
+}
+
+.dayViewUserJobFirstBlock {
+    /* display: flex; */
+    display: inline-flex;
+    width: 7.13%;
+    flex: 0 0 7.13%;
+    /*border-right: 1px solid #e6e6e6;*/
+    height: 100%;
+    padding-left: 0.4%;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    /*background-color: white;*/
+    font-size: 1vw;
+    overflow: visible;
+    z-index: 8;
+    /* white-space: nowrap is important to let text extend out of box */
+    white-space: nowrap;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.dayViewUserJobBlock {
+    /* display: flex; */
+    display: inline-flex;
+    width: 7.13%;
+    flex: 0 0 7.13%;
+    border-right: 1px solid #e6e6e6;
+    height: 100%;
+    padding-left: 0.4%;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 6;
+}
+
+.dayViewUserIdleBlock {
+    display: flex;
+    width: 7.13%;
+    flex: 0 0 7.13%;
+    border-right: 1px solid #e6e6e6;
+    height: 100%;
+    padding-left: 0.4%;
+    position: relative;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: white;
+    z-index: 6;
+}
+
+.ScheduleDatePickerText {
+    display: flex;
+    height: max-content;
+    margin-bottom: -0.5%;
+    margin-left: 1%;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.ScheduleDatePickerInput {
+    display: flex;
+    height: max-content;
+    margin-left: 1%;
+    align-items: center;
+    color: rgba(52, 52, 52, 0.80);
+    /*font-family: "Arial Narrow";*/
+    /*letter-spacing: 0px;*/
+    /*font-size: 1.5vw;*/
+}
+
+.ScheduleDatePickerBlock {
+    display: flex;
+    width: 70%;
+    height: 100%;
+    margin-left: 1%;
+    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.ScheduleNewJobBlock {
+    display: flex;
+    width: 30%;
+    height: 80%;
+    margin-left: 1%;
+    position: relative;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#newJobBtn {
+    /* margin-top: 15px; */
+    height: 50%;
+    border-radius: 18px;
+    background-color: #43b75b;
+    color: white;
+    position: relative;
+    font-size: smaller;
+    text-align: center;
+    width: 28%;
+    /*padding: 8px;*/
+    /*padding-top: 10px;*/
+    /*padding-bottom: 10px;*/
+    /*padding-left: 20px;*/
+    /*padding-right: 20px;*/
+    right: 8%;
+    border: none;
+    /*height: max-content;*/
+}
+
+
+#addNewBtn {
+    /* margin-top: 15px; */
+    height: 4%;
+    border-radius: 18px;
+    background-color:  #effce9;
+    color: #43b75b;
+    position: relative;
+    font-size: smaller;
+    width: 48%;
+    /*padding: 8px;*/
+    font-weight: bold;
+    /*padding-top: 10px;*/
+    /*padding-bottom: 10px;*/
+    /*padding-left: 20px;*/
+    /*padding-right: 20px;*/
+    /*opacity: 0.6;*/
+    right: 3%;
+    border: none;
+    /*height: max-content;*/
+}
+
+#SchedDatePicker {
+    background-color: transparent;
+    font-size: 1.8vw;
+    font-weight: bold;
+    width: 72%;
+    border: 0px solid;
+    color: rgba(52, 52, 52, 0.80);
+    margin: 0px;
+    padding: 0px;
+    /* font-family: "Arial Narrow"; */
+    letter-spacing: 0px;
+}
+
+.MidMenuBarBlock {
+    display: flex;
+    /* horizontal align */
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+    position: relative;
+    width: 97%;
+    height: 6vw;
+    font-size: 1vw;
+    background-color: white;
+}
+
+.MenuItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-left: 2%;
+    width: 40%;
+}
+
+.MidMenuItem {
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 40%;
+    justify-content: flex-start;
+    /* vertical align */
+    align-items: center;
+}
+
+.RightMenuItem {
+    width: 16%;
+    display: flex;
+    position: relative;
+    height: 100%;
+    justify-content: center;
+    /* vertical align */
+    /*align-items: flex-end;*/
+    flex-direction: column;
+}
+
+.SwitchBtn {
+    padding: 5px;
+    border-radius: 15px;
+    font-size: smaller;
+    width: 15%;
+    margin: 3px;
+    background-color: #e6e6e6;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.leftBlockUpJob{
+    font-weight: bold;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+#jobsBtn{
+    border: 0px solid;
+    margin-top: 15px;
+    margin-right: 5px;
+    font-size: medium;
+    opacity: 0.6;
+}
+
+#clockIcon{
+    width: 24px;
+    height: 24px;
+    margin-top: 15px;
+    margin-left: 2px;
+}
+
+.leftSched{
+    color: #43b75b;
+    display: inline-flex;
+}
+
+#leftSchedText{
+    text-align: center;
+    margin-left: 10px;
+    margin-top: 20px;
+    /*font-weight: bold;*/
+    /*align-content: center;*/
+    /*align-items: center;*/
+}
+
+#leftSchedCount{
+    text-align: right;
+    margin-left: 60px;
+    margin-top: 20px;
+    color: rgba(52, 52, 52, 0.80);
+    /*font-weight: bold;*/
+    /*align-content: center;*/
+    /*align-items: center;*/
+}
+
+.leftBlockUp{
+    height:95% ;
+    margin-bottom: 5%;
+}
+
+
+.leftBlockDown{
+    height:5% ;
+    color: rgba(52, 52, 52, 0.80);
+    padding-left: 5%;
+    /*margin-top: 40%;*/
+    margin-left: 5%;
+    /*font-weight: bold;*/
+    position: absolute;
+    bottom: 0;
+}
+
+.logoutImg{
+    width: 12%;
+    height: 60%;
+    /*margin-left: 5%;*/
+
+}
+/*style="margin-bottom: 2%;display: flex;width: fit-content;height: fit-content;font-size: 2.5vw;font-weight: bold;"*/
+
+.schedPlace{
+    margin-bottom: 2%;
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    font-size: 2vw;
+    font-weight: bold;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+
+/*style="margin-top: 2%;display: flex;width: fit-content;height: fit-content;font-size: 1vw;"*/
+.goBack{
+    margin-top: 2%;
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    font-size: 1vw;
+    color: rgba(52, 52, 52, 0.80);
+}
+
+.leftBlockJob{
+    color: rgba(52, 52, 52, 0.80);
+    /*font-weight: bold;*/
+}
+
+.status{
+    color: rgba(52, 52, 52, 0.80);
+    width: 100%;
+}
