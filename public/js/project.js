@@ -4,11 +4,687 @@
 // need for jslint, to allow the browser globals available
 // https://stackoverflow.com/questions/1853473/should-i-worry-about-window-is-not-defined-jslint-strict-mode-error
 
-
 "use strict";
 
 // global var for job filter
 var jobStatusFilter = new Map();
+
+
+// globals
+var LoginMessageText = "";
+var HintMessageText = "";
+
+// global var for joblist
+var userInfoList = new Map();
+var uidList = [];
+var selDate = "27-10-2018 01:00";
+var selTime = "01:00";
+
+var selTs = 0;
+
+// 30 minutes in milliseconds
+var stepTs = 30 * 60 * 1000;
+
+function updateSelectedDate() {
+
+    var obj = dateTimeObject($("#SchedDatePicker").val() + " " + selTime);
+
+    selDate = dateTimeObjectToStringDate(obj);
+
+    /** Gets the time value in milliseconds. */
+    selTs = obj.getTime();
+}
+
+function dateTimeObjectToStringFull(d) {
+    var s = ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
+        d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+
+    return s;
+}
+
+function dateTimeObjectToStringDate(d) {
+    var s = ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + d.getFullYear();
+
+    return s;
+}
+
+// draw jobs matrix
+function drawJobMatrix() {
+
+    //draw scheduled joblist box
+    drawTableTitle();
+
+    // get current selected date time
+    updateSelectedDate();
+
+    // "17-10-2018 01:00"
+    var selDateObj = dateTimeObject(selDate + " " + selTime);
+
+    if (selDateObj == null) {
+        return;
+    }
+
+    // global uidList sort by uid
+    uidList.sort();
+
+    var count = 0;
+
+    // draw unassigned jobs
+    count += drawByUID(0);
+
+    for (const uid of uidList) {
+
+        if (uid == 0) {
+            continue;
+        }
+
+        count += drawByUID(uid);
+
+    }
+
+    console.log("draw " + count + " job list done for " + getFunName());
+}
+
+/** assign job to uid
+ * @param aJob
+ * @param dstUid
+ * @returns {boolean}
+ */
+function assignToUid(aJob, dstUid) {
+
+    var srcUid = Number(aJob.user_id);
+    if (srcUid == undefined) {
+        console.error("invalid source job(user_id) for assignToUid(" + uid + "): " + aJob);
+        return false;
+    }
+    dstUid = Number(dstUid);
+    if (srcUid == dstUid) {
+        console.error("dstUid is the same for assignToUid(" + dstUid + "): " + aJob);
+        return true;
+    }
+
+    var srcUser = userInfoList.get(srcUid);
+    if (srcUser == undefined) {
+        console.error("source user not found(" + srcUid + ") for assignToUid(" + dstUid + "): " + aJob);
+        return false;
+    }
+
+    var srcJobId = Number(aJob.job_id);
+    if (srcJobId == undefined) {
+        console.error("invalid source job(job_id) for assignToUid(" + dstUid + "): " + aJob);
+        return false;
+    }
+
+    var dstUser = userInfoList.get(dstUid);
+    if (dstUser == undefined) {
+        console.error("dest user not found(" + dstUid + ") for assignToUid(" + dstUid + "): " + aJob);
+        return false;
+    }
+
+    // TODO: update slot setting
+
+    srcUser.joblist.delete(srcJobId);
+
+    userInfoList.set(srcUid, srcUser);
+
+    aJob.user_id = dstUid;
+
+    if (dstUid == 0) {
+        aJob.job_status = "unassigned";
+    }
+    if (srcUid == 0 && dstUid != 0) {
+        aJob.job_status = "assigned";
+    }
+
+    aJob = setupJob(aJob);
+
+    dstUser.joblist.set(srcJobId, aJob)
+
+    userInfoList.set(dstUid, dstUser);
+
+    return true;
+}
+
+/** draw jobs by uid
+ * @param uid
+ * @returns {number}
+ */
+function drawByUID(uid) {
+
+    uid = Number(uid);
+
+    var count = 0;
+
+    // unassigned job's user id = 0
+
+    var curUser = userInfoList.get(uid);
+    if (curUser == undefined) {
+        setMessageBar("user not found(" + uid + ") for drawByUID(" + uid + ")", "red");
+        return count;
+    }
+
+    var jobCount = curUser.joblist.size;
+
+    if (uid == 0) {
+
+        $('#unassignedList').empty();
+
+        var divID = 'unassigned_' + 0 + '_' + 0 + '_' + 0;
+        var htmlTitleText = "Drop here to be unassigned";
+        var divHtml = `<div title="` + htmlTitleText + `" draggable="false" ondragstart="return false;" ondragover="allowDrop(event);" ondrop="unassignedDrop(event)" class="unassignedJob"  id="` + divID + `">
+                            <div class="unassignedJobStatus">` + "Drop here" + `</div>
+                            <div class="unassignedJobTitle">` + "to unassigned" + `</div>
+                            <div class="unassignedJobDetail">` + "a scheduled job" + `</div>
+                        </div>`;
+        // disabled for moon
+        // $('#unassignedList').append(divHtml);
+
+        for (const jobId of curUser.joblist.keys()) {
+            count += 1;
+            var aJob = curUser.joblist.get(jobId);
+            var divID = 'pos_' + uid + '_' + 0 + '_' + jobId;
+            var htmlTitleText = aJob.job_status + ", " + aJob.job_title + ", " + aJob.detail;
+            var divHtml = `<div title="` + htmlTitleText + `" draggable="true" ondragstart="Unassigned_drag(event)" class="unassignedJob" id="` + divID + `">
+                            <div class="unassignedJobStatus">` + aJob.job_status + `</div>
+                            <div class="unassignedJobTitle">` + aJob.job_title + `</div>
+                            <div class="unassignedJobDetail">` + aJob.detail + `</div>
+                        </div>`;
+            $('#unassignedList').append(divHtml);
+        }
+        return count;
+    }
+
+    var conflictedJobsArray = [];
+
+    var userLineID = "line_" + uid;
+
+    // remove jobs from old line first
+    $("#" + userLineID).empty();
+
+    // append all jobs of this user
+
+    var curUsername = curUser.first_name + ' ' + curUser.last_name;
+
+    // user profile
+    var lineTitleID = "line_title_" + uid;
+    $("#" + userLineID).append(`
+        <div class="dayViewUserTitle" id="`+ lineTitleID + `">
+            <div class="dayViewUserTitleImg">
+                <img src="image/profile.png" class="SchedAvatar">
+            </div>
+            <div class="dayViewUserTitleText">
+                <div class="maxFlexBox" style="justify-content: flex-start;align-items: center;">
+                    `+ curUsername + `
+                </div>
+                <div class="maxFlexBoxCount" style="justify-content: flex-start;align-items: center;">
+                `+ jobCount + ` Jobs
+                </div>
+            </div>
+            <div class="dayViewUserTitleDel">-</div>
+        </div>`);
+
+    var maxCol = 11;
+
+    // draw all slots in idle
+    for (var col = 0; col < maxCol; col++) {
+        var cellID = 'pos_' + uid + '_' + col + '_0';
+        $("#" + userLineID).append(`<div id="` + cellID + `" class="dayViewUserIdleBlock" draggable="false" ondragstart="return false;" ondragover="allowDrop(event);" ondrop="drop(event)">
+            <br />
+            &nbsp;
+            </div>`);
+    }
+
+    if (jobCount === 0) {
+        console.log("no job for uid: " + uid);
+        return count;
+    }
+
+    // sort jobs by start time
+    var startList = [];
+    var jobMap = new Map();
+
+    for (const aJob of curUser.joblist.values()) {
+
+        var start_time = aJob['start_time'];
+
+        // for debug: force to today
+        var start_time_parts = start_time.split(' ');
+
+        start_time = selDate + " " + start_time_parts[1];
+
+        var startTs = dateTimeTs(start_time, false);
+
+        // for db time
+
+        if (startTs == 0) {
+            console.error("invalid job start time: " + start_time);
+            conflictedJobsArray.push(aJob);
+            continue;
+        }
+
+        if (jobMap.has(startTs)) {
+            console.error("job start time conflicted: " + aJob.job_id + ", " + start_time);
+            conflictedJobsArray.push(aJob);
+            continue;
+        }
+
+        startList.push(startTs);
+        jobMap.set(startTs, aJob);
+
+    }
+
+    startList.sort();
+
+    // time slots
+    var last_col = 0;
+    var start_column = 0;
+    var finish_column = 0;
+    var preJobId = 0;
+
+
+    var fontColor = random_rgba();
+    var randomColor = getRandomColor(fontColor);
+
+    for (const startTs of startList) {
+
+        var aJob = jobMap.get(startTs);
+
+        var jobId = aJob.job_id;
+
+        // apply filter
+        if (jobStatusFilter.size > 0) {
+            var curStatus = aJob.job_status.toUpperCase();
+            if (jobStatusFilter.has("ALL") === false && jobStatusFilter.has(curStatus) === false) {
+                continue;
+            }
+        }
+
+        var start_time = aJob.start_time;
+
+        // TODO: remove debug
+        // for debug: force to today
+        var start_time_parts = start_time.split(' ');
+
+        start_column = aJob.start_column;
+
+        finish_column = aJob.finish_column;
+
+        if (start_column < last_col) {
+            // job time overlap
+            console.error("job time overlap(" + uid + "): " + preJobId + ", " + jobId);
+            console.log(curUser.joblist.get(preJobId));
+            console.log(curUser.joblist.get(jobId));
+            conflictedJobsArray.push(aJob);
+            continue;
+        }
+        if (start_column > maxCol) {
+            // job time overlap
+            console.error("job time out of range(" + uid + ", " + start_column + " > " + maxCol + "): " + jobId);
+            console.log(curUser.joblist.get(jobId));
+            conflictedJobsArray.push(aJob);
+            continue;
+        }
+        last_col = finish_column;
+        preJobId = jobId;
+
+        // job slot
+
+        var divHtml = start_time_parts[1] + '<br />' + aJob.job_title;
+
+
+        for (var col = finish_column - 1; col >= start_column; col--) {
+
+            // get existed idle slot
+
+            var idleCellID = 'pos_' + uid + '_' + col + '_0';
+
+            if (col > maxCol) {
+                console.error("slot skipped, job time out of range(" + uid + ", " + col + " > " + maxCol + "): " + htmlTitle);
+                continue;
+            }
+
+            var checkExist = $("#" + idleCellID);
+
+            checkExist.css('background-color', "red");
+
+            if (checkExist === undefined || checkExist.length <= 0) {
+                console.error("idle div no-exist: " + idleCellID);
+                continue;
+            }
+
+            var cellID = 'pos_' + uid + '_' + col + '_' + jobId;
+
+            // divHtml = jobId;
+            var htmlTitle = cellID + ", " + aJob.duration + ", " + start_time;
+
+
+            var firstDivHtml = 'background-color:' + randomColor + '; color:' + fontColor + '; border-left: 3px solid ' + fontColor;
+            var otherDivHtml = 'background-color:' + randomColor;
+
+            //job div box\
+            if (col === start_column) {
+
+                // job info
+                $('#' + idleCellID).replaceWith(`<div title="` + htmlTitle + `" id="` + cellID + `" class="dayViewUserJobFirstBlock" style="` + firstDivHtml + `" draggable="true" ondrop="return false;" ondragstart="drag(event)">
+                `+ divHtml + `</div>`);
+
+                count += 1;
+
+                console.log("job: " + htmlTitle)
+
+            } else {
+                // duration slots
+                $('#' + idleCellID).replaceWith(`<div  title="` + htmlTitle + `" id="` + cellID + `" class="dayViewUserJobBlock" style="` + otherDivHtml + `" draggable="true" ondrop="return false;" ondragstart="drag(event)">
+                <br />
+                &nbsp;
+                </div>`);
+            }
+        }
+    }
+
+    for (var aJob of conflictedJobsArray) {
+        assignToUid(aJob, 0);
+
+        // update jobs in db
+
+        var updateInfo = { "job_id": aJob.job_id, "user_id": aJob.user_id, "job_status": aJob.job_status, "start_time": aJob.start_time };
+
+        updateJob(updateInfo, 2000);
+
+    }
+
+    if (conflictedJobsArray.length > 0 && uid != 0) {
+        drawByUID(0);
+    }
+
+    return count;
+}
+
+/**
+ * draw scheduled job list title
+ */
+function drawTableTitle() {
+    // clear before renew
+    $('#unassignedList > div').remove();
+
+    $('#dayViewLayerID').empty();
+
+    // time title
+    $('#dayViewLayerID').append(`
+    <div class="dayViewHead" id="dayViewHeadID">
+        <div class="dayViewHeadTitle">Assigned To</div>
+        <div class="dayViewHeadTitle">1:00am</div>
+        <div class="dayViewHeadTitle">2:00am</div>
+        <div class="dayViewHeadTitle">3:00am</div>
+        <div class="dayViewHeadTitle">4:00am</div>
+        <div class="dayViewHeadTitle">5:00am</div>
+        <div class="dayViewHeadTitle">6:00am</div>
+    </div>`);
+
+    // user lines box
+    $('#dayViewLayerID').append(`
+    <div class="dayViewLines" id="dayViewLinesID">
+    </div>`);
+
+    // append all line for users
+    for (const uid of uidList) {
+
+        if (uid == 0) {
+            continue;
+        }
+
+        var userLineID = "line_" + uid;
+
+        $("#dayViewLinesID").append(`<div class="dayViewOneLine" id="` + userLineID + `"></div>`);
+
+    }
+
+    syncLeftRightHeight();
+}
+
+/**
+ * get current div's user id, column, job_id
+ * @param curDivId
+ */
+function getIdInfos(curDivId) {
+
+    var divIDinfo = curDivId.split('_');
+    return divIDinfo;
+
+}
+
+// reset drag drop state
+function dragDropReset(destDivId) {
+    dragDropSrcId = "";
+    dragDropDstId = "";
+    $("#" + destDivId).css('cursor', "auto");
+}
+
+
+
+function allowDrop(event) {
+    event.preventDefault();
+
+    var destDivId = event.target.id;
+
+    if (typeof (event.target) != "object") {
+        console.log("invalid source object from drag");
+        console.log(event);
+        return;
+    }
+
+    if (dragDropSrcId == "") {
+        console.log("invalid dragDropSrcId object from drag: " + dragDropSrcId);
+        console.log(event);
+        return;
+    }
+    var srcDivId = dragDropSrcId;
+    console.log("drop check for src div: " + dragDropSrcId);
+    console.log("drop check for dest div: " + destDivId);
+
+    $("#" + destDivId).css('cursor', "no-drop");
+
+    var destDivInfo = getIdInfos(destDivId);
+
+    var srcDivInfo = getIdInfos(srcDivId);
+
+    var srcUid = Number(srcDivInfo[1]);
+
+    var jobId = Number(srcDivInfo[3]);
+
+    var dstUid = Number(destDivInfo[1]);
+
+    if (dstUid === NaN || srcUid === NaN) {
+        dragDropReset(destDivId);
+        return;
+    }
+
+    //get dropping user job list
+    var srcUser = userInfoList.get(srcUid);
+
+    if (srcUser === undefined) {
+        setMessageBar("source user not found for drag & drop from " + srcDivId + " to " + destDivId, "red");
+        dragDropReset(destDivId);
+        return;
+    }
+
+    //get dropping job detail
+    var aJob = srcUser.joblist.get(jobId);
+
+    if (aJob === undefined) {
+        setMessageBar("job not found for drag & drop from " + srcDivId + " to " + destDivId, "red");
+        dragDropReset(destDivId);
+        return;
+    }
+
+    var dstUser = userInfoList.get(dstUid);
+    if (dstUser == undefined) {
+        setMessageBar("dest user not found for drag & drop from " + srcDivId + " to " + destDivId, "red");
+        dragDropReset(destDivId);
+        return false;
+    }
+
+    var start_col = destDivInfo[2];  //dest col number
+
+    var finish_col = getFinishCol(aJob.duration, start_col);
+
+    for (const dJob of dstUser.joblist.values()) {
+        if (start_col >= dJob.start_column && finish_col <= dJob.start_column) {
+            setMessageBar("start column conflict for drag & drop from " + srcDivId + " to " + destDivId, "red");
+            console.log(aJob);
+            console.log(dJob);
+            dragDropReset(destDivId);
+            return false;
+        }
+        if (start_col <= dJob.finish_column && finish_col >= dJob.finish_column) {
+            setMessageBar("finish column conflict for drag & drop from " + srcDivId + " to " + destDivId, "red");
+            console.log(aJob);
+            console.log(dJob);
+            dragDropReset(destDivId);
+            return false;
+        }
+    }
+    $("#" + destDivId).css('cursor', "auto");
+    console.log("drop check pass dest div: " + destDivId);
+    return false;
+}
+
+// global var for drag drop
+var dragDropSrcId = "";
+var dragDropDstId = "";
+
+function drag(event) {
+    console.log("Assigned_drag div's id = " + event.target.id);
+    event.dataTransfer.setData("text", event.target.id);
+    dragDropSrcId = event.target.id;
+    /**
+    * 1. drag start set class style as scheduled div
+    * 2. drag start clear the rest job duration boxes's style
+    * 3. set user_id and column_id = 0. div_id = uid_colId_jobId
+    * 4. set jobstatus = unsign
+    */
+    return;
+}
+
+function Unassigned_drag(event) {
+    console.log("Unassigned_drag div's id = " + event.target.id);
+    event.dataTransfer.setData("text", event.target.id);
+    dragDropSrcId = event.target.id;
+    /**
+     * 1. drag start set class style as scheduled div
+     * 2. drag start clear the rest job duration boxes's style
+     * 3. set user_id and column_id = 0. div_id = uid_colId_jobId
+     * 4. set jobstatus = unsign
+    */
+    return;
+}
+
+function drop(event, unassigned) {
+    event.preventDefault();
+
+    var destDivId = event.target.id;
+
+    // var srcDivId = event.dataTransfer.getData("text");
+
+    var srcDivId = dragDropSrcId;
+    if (srcDivId == "") {
+        console.log("invalid src object from drag: " + srcDivId);
+        console.log(event);
+        return;
+    }
+    if (typeof (event.target) != "object" || destDivId == "") {
+        console.log("invalid dest object from drag: " + destDivId);
+        console.log(event);
+        dragDropReset(destDivId);
+        return;
+    }
+
+    console.log("drop into div: " + destDivId);
+
+    var destDivInfo = getIdInfos(destDivId);
+
+    var srcDivInfo = getIdInfos(srcDivId);
+
+    var srcUid = Number(srcDivInfo[1]);
+
+    var jobId = Number(srcDivInfo[3]);
+
+    var dstUid = Number(destDivInfo[1]);
+
+    if (dstUid === NaN) {
+        dragDropReset(destDivId);
+        return;
+    }
+
+    //get dropping user job list
+    var srcUser = userInfoList.get(srcUid);
+
+    //get dropping job detail
+    var aJob = srcUser.joblist.get(jobId);
+
+    if (aJob === undefined) {
+        setMessageBar("job not found for drag & drop from " + srcDivId + " to " + destDivId, "red");
+        dragDropReset(destDivId);
+        return;
+    }
+
+    if (unassigned !== true) {
+        var start_col = destDivInfo[2];  //dest col number
+
+        var new_start_time = getNewStartTime(start_col);
+
+        aJob.start_time = new_start_time;
+        aJob = setupJob(aJob);
+    } else {
+        dstUid = 0;
+    }
+
+    assignToUid(aJob, dstUid);
+
+    drawByUID(srcUid);
+
+    drawByUID(dstUid);
+
+    var updateInfo = { "job_id": aJob.job_id, "user_id": aJob.user_id, "job_status": aJob.job_status, "start_time": aJob.start_time };
+
+    updateJob(updateInfo);
+
+    dragDropReset(destDivId);
+    return;
+}
+
+function unassignedDrop(event) {
+    drop(event, true);
+    return;
+}
+
+
+function random_rgba() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
+}
+
+
+function getRandomColor(srcColor) {
+
+    //tokens = str.split(delimiter).slice(start)  //"rgba(127,190,125,0.5)"
+    var colorParts = srcColor.split(',');
+    var result = "";
+
+    for (var i = 0; i < colorParts.length; i++) {
+
+        if (i == colorParts.length - 1) {
+            result += 0.3;
+            result += ")";
+
+        } else {
+
+            result += colorParts[i];
+            result += ",";
+        }
+    }
+    return result;
+}
 
 // reload page with url
 function reloadCurrentPage(url) {
@@ -79,7 +755,9 @@ function setLoginMessage(text, color) {
  */
 function getFunName() {
     var callerName;
-    try { throw new Error(); }
+    try {
+        throw new Error();
+    }
     catch (e) {
         var re = /(\w+)@|at (\w+) \(/g, st = e.stack, m;
         re.exec(st), m = re.exec(st);
@@ -103,8 +781,11 @@ function setJobStatusFilter(event) {
     $('#jobStatusFilterID :selected').each(function (i, selected) {
         var selText = $(selected).text().trim().toUpperCase();
         jobStatusFilter.set(selText, selText);
+        var statusText = null;
         if (jobStatusFilter.size == 1) {
+
             $("#currentJobFilterID").text(selText.capitalize());
+
         } else {
             $("#currentJobFilterID").text("Multiple");
         }
@@ -134,11 +815,11 @@ function showSchedule(value) {
             weekPage.style.display = "flex";
             monthPage.style.display = "none";
             dayBtn.style.backgroundColor = "#e6e6e6";
-            dayBtn.style.color = 'rgba(' + [52,52,52,0.80].join(',') + ')';
+            dayBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
             weekBtn.style.backgroundColor = "#43b75b";
             weekBtn.style.color = "white";
             monthBtn.style.backgroundColor = "#e6e6e6";
-            monthBtn.style.color = 'rgba(' + [52,52,52,0.80].join(',') + ')';;
+            monthBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
 
 
             break;
@@ -147,9 +828,9 @@ function showSchedule(value) {
             weekPage.style.display = "none";
             monthPage.style.display = "flex";
             dayBtn.style.backgroundColor = "#e6e6e6";
-            dayBtn.style.color = 'rgba(' + [52,52,52,0.80].join(',') + ')';;
+            dayBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
             weekBtn.style.backgroundColor = "#e6e6e6";
-            weekBtn.style.color = 'rgba(' + [52,52,52,0.80].join(',') + ')';;
+            weekBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
             monthBtn.style.backgroundColor = "#43b75b";
             monthBtn.style.color = "white";
 
@@ -163,9 +844,9 @@ function showSchedule(value) {
             dayBtn.style.backgroundColor = "#43b75b";
             dayBtn.style.color = "white";
             weekBtn.style.backgroundColor = "#e6e6e6";
-            weekBtn.style.color = 'rgba(' + [52,52,52,0.80].join(',') + ')';;
+            weekBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
             monthBtn.style.backgroundColor = "#e6e6e6";
-            monthBtn.style.color = 'rgba(' + [52,52,52,0.80].join(',') + ')';;
+            monthBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
 
             break;
 
@@ -174,12 +855,11 @@ function showSchedule(value) {
 }
 
 
-
 /**
  * pass a add new job require to newjob.php
  */
-// Variable to hold newJobRequest
-var newJobRequest;
+// Variable to hold request
+var request;
 
 $(function () {
     // Bind to the submit event of our form
@@ -187,9 +867,9 @@ $(function () {
         // Prevent default posting of form - put here to work in case of errors
         event.preventDefault();
 
-        // Abort any pending newJobRequest
-        if (newJobRequest) {
-            newJobRequest.abort();
+        // Abort any pending request
+        if (request) {
+            request.abort();
         }
         // setup some local variables
         var $form = $('#NewJobPageLayerID');
@@ -209,26 +889,25 @@ $(function () {
             }
         );
 
-        // do not use JSON.stringify here
-        // convert to array
+        // do not use JSON.stringify here convert to array
         var postJSON = { data: postdata };
 
-        // Let's disable the inputs for the duration of the Ajax newJobRequest.
+        // Let's disable the inputs for the duration of the Ajax request.
         // Note: we disable elements AFTER the form data has been serialized.
         // Disabled form elements will not be serialized.
         $inputs.prop("disabled", true);
 
         setMessageBar("submit new job ...", "yellow");
 
-        // Fire off the newJobRequest to /form.php
-        newJobRequest = $.ajax({
+        // Fire off the request to /form.php
+        request = $.ajax({
             url: "api.php?act=newjob",
             type: "post",
             data: postJSON
         });
 
         // Callback handler that will be called on success
-        newJobRequest.done(function (tmsdata, textStatus, jqXHR) {
+        request.done(function (tmsdata, textStatus, jqXHR) {
             $("#NewJobPageLayerID").css("display", "none");
             $('#NewJobPageLayerID').hide();
 
@@ -252,7 +931,7 @@ $(function () {
         });
 
         // Callback handler that will be called on failure
-        newJobRequest.fail(function (jqXHR, textStatus, errorThrown) {
+        request.fail(function (jqXHR, textStatus, errorThrown) {
             // Log the error to the console
             $("#NewJobPageLayerID").css("display", "none");
             $('#NewJobPageLayerID').hide();
@@ -265,8 +944,8 @@ $(function () {
             );
         });
 
-        // Callback handler that will be called regardless if the newJobRequest failed or succeeded
-        newJobRequest.always(function () {
+        // Callback handler that will be called regardless if the request failed or succeeded
+        request.always(function () {
             // Reenable the inputs
             $inputs.prop("disabled", false);
         });
@@ -283,9 +962,9 @@ function postLogin(event) {
     // Prevent default posting of form - put here to work in case of errors
     event.preventDefault();
 
-    // Abort any pending newJobRequest
-    if (newJobRequest) {
-        newJobRequest.abort();
+    // Abort any pending request
+    if (request) {
+        request.abort();
     }
     // setup some local variables
     var $form = $('#LoginPageLayerID');
@@ -307,22 +986,22 @@ function postLogin(event) {
 
     var postJSON = { data: postdata };
 
-    // Let's disable the inputs for the duration of the Ajax newJobRequest.
+    // Let's disable the inputs for the duration of the Ajax request.
     // Note: we disable elements AFTER the form data has been serialized.
     // Disabled form elements will not be serialized.
     $inputs.prop("disabled", true);
 
     setMessageBar("submit login ...", "yellow");
 
-    // Fire off the newJobRequest to /form.php
-    newJobRequest = $.ajax({
+    // Fire off the request to /form.php
+    request = $.ajax({
         url: "api.php?act=sess&subact=login",
         type: "post",
         data: postJSON
     });
 
     // Callback handler that will be called on success
-    newJobRequest.done(function (tmsdata, textStatus, jqXHR) {
+    request.done(function (tmsdata, textStatus, jqXHR) {
 
         //
         if (check_session(tmsdata) !== 0) {
@@ -335,11 +1014,12 @@ function postLogin(event) {
         if (errcode != 0) {
             setMessageBar(errmsg, "red");
             setLoginMessage(errmsg, "red");
-            $("#LoginPageLayerID").css("display", "flex");
-            $("#LoginPageLayerID").show();
+
+            showLoginPage(true);
+
         } else {
-            $("#LoginPageLayerID").css("display", "none");
-            $("#LoginPageLayerID").hide();
+
+            showLoginPage(false);
             // redraw
             getjoblist(errmsg);
         }
@@ -347,10 +1027,9 @@ function postLogin(event) {
     });
 
     // Callback handler that will be called on failure
-    newJobRequest.fail(function (jqXHR, textStatus, errorThrown) {
+    request.fail(function (jqXHR, textStatus, errorThrown) {
         // Log the error to the console
-        $("#LoginPageLayerID").css("display", "none");
-        $("#LoginPageLayerID").hide();
+       showLoginPage(false);
 
         setMessageBar("submit login failed: " + textStatus + ", " + errorThrown, "red");
 
@@ -360,9 +1039,8 @@ function postLogin(event) {
         );
     });
 
-    // Callback handler that will be called regardless
-    // if the newJobRequest failed or succeeded
-    newJobRequest.always(function () {
+    // Callback handler that will be called regardless if the request failed or succeeded
+    request.always(function () {
         // Reenable the inputs
         $inputs.prop("disabled", false);
     });
@@ -398,7 +1076,6 @@ function dateTimeTs(dateTime, isDbFormat) {
 function dateTimeObject(dateTime, isDbFormat) {
 
     // "Mon, 29 Oct, 2018 01:00"
-
     var tz = getTimeZoneShort();
 
     var dateParts = dateTime.split(", ");
@@ -435,7 +1112,6 @@ $(function () {
     $('#NewJobTime .time').timepicker({
         'showDuration': true,
         'timeFormat': 'H:i:s',
-
 
     });
 
@@ -507,26 +1183,15 @@ function check_session(tmsdata, msg) {
         setMessageBar(msg, "red");
         setLoginMessage(msg, "red");
 
-        $("#logoutHeadID").css("display", "none");
-        $('#logoutHeadID').hide();
+        showLoginPage(true);
 
-        $("#loginHeadID").css("display", "none");
-        $('#loginHeadID').hide();
-
-        $("#LoginPageLayerID").css("display", "flex");
-        $("#LoginPageLayerID").show();
 
         return errcode;
     }
 
     // login ok
 
-    $("#logoutHeadID").css("display", "flex");
-    $('#logoutHeadID').show();
-
-
-    $("#loginHeadID").css("display", "none");
-    $('#loginHeadID').hide();
+    showLoginPage(false);
 
     return 0;
 
@@ -538,10 +1203,46 @@ function check_session(tmsdata, msg) {
 function apiLogout() {
 
     setMessageBar("Logout ...", "yellow");
+    
 
     $.get("api.php?act=sess&subact=logout", function (tmsdata, status) {
         check_session(tmsdata, "previous account Logout successfully.");
     });
+}
+
+/**
+ * switch login page or job list page
+ * @param showLogin
+ */
+function showLoginPage(showLogin) {
+
+    if (showLogin == true) {
+        $("#mainFlexBlockID").css("display", "none");
+        $("#mainFlexBlockID").hide();
+        $("#LoginPageLayerID").css("display", "flex");
+        $("#LoginPageLayerID").show();
+
+        $("#logoutHeadID").css("display", "none");
+        $('#logoutHeadID').hide();
+
+        $("#loginHeadID").css("display", "none");
+        $('#loginHeadID').hide();
+
+    } else {
+        $("#LoginPageLayerID").css("display", "none");
+        $("#LoginPageLayerID").hide();
+        $("#mainFlexBlockID").css("display", "flex");
+        $("#mainFlexBlockID").show();
+
+
+        $("#logoutHeadID").css("display", "flex");
+        $('#logoutHeadID').show();
+
+
+        $("#loginHeadID").css("display", "none");
+        $('#loginHeadID').hide();
+
+    }
 }
 
 /**
@@ -615,7 +1316,7 @@ function getjoblist(msg) {
 function setupJob(aJob) {
     var uid = aJob.user_id;
     if (uid === undefined) {
-        console.error("invalid job: "+aJob);
+        console.error("invalid job: " + aJob);
         return aJob;
     }
     if (uid == 0) {
@@ -638,7 +1339,7 @@ function syncLeftRightHeight() {
     var rightHeight = $("#rightBlockID").height();
     if (leftHeight > rightHeight) {
         $("#rightBlockID").height(leftHeight);
-    }else if(rightHeight > leftHeight){
+    } else if (rightHeight > leftHeight) {
         $("#leftBlockID").height(rightHeight);
     }
 }
@@ -692,7 +1393,7 @@ function updateJob(postData, wait) {
 
     setMessageBar("updating job ...", "yellow");
 
-    // Fire off the newJobRequest to /form.php
+    // Fire off the request to /form.php
     updateRequest = $.ajax({
         url: "api.php?act=updatejob",
         type: "post",

@@ -5,6 +5,8 @@
  * 1. date picker format, click different date show different schedule
  * 2. check user role when user update job or create new job
  * 3. get job list depends on user role, manager can see all user's info, staffs can only view their job list
+ * 4. login page layout
+ * 5. own job can be move delay half hour or 1 hour
  */
 
 
@@ -61,7 +63,7 @@ if (strlen($browser_id) === 0) {
 // output include: action, data, errcode, errmsg
 $output = array("action" => $action, "sub_action" => $sub_action, "method" => $_SERVER['REQUEST_METHOD'], "uid" => "", "sid" => "", "browser_id" => $browser_id, "data" => new stdClass(), "errcode" => 0, "errmsg" => "");
 
-// done will flush $output in JSON format to browser and terminate current newJobRequest.
+// done will flush $output in JSON format to browser and terminate current request.
 function done()
 {
     global $output;
@@ -73,7 +75,7 @@ function done()
 
 // remote access from https only
 if ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') && (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] != $_SERVER['REMOTE_ADDR'])) {
-    // no SSL newJobRequest from remote
+    // no SSL request from remote
     $output["errcode"] = 2048;
     $output["errmsg"] = "please access this api from https";
     $output["data"] = new stdClass();
