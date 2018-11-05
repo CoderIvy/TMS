@@ -1,0 +1,7 @@
+<?php
+// define your database account
+$DatabaseAccount["host"] = "127.0.0.1";
+$DatabaseAccount["port"] = 3306;
+$DatabaseAccount["dbname"] = "databaseName";
+$DatabaseAccount["username"] = "username";
+$DatabaseAccount["password"] = 'password';

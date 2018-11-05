@@ -1,25 +1,53 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: chenlan
- * Date: 14/10/18
- * Time: 4:29 PM
- */
+// only included by api.php
+if (defined("_API_ENTRY") === false) {
+    exit(0);
+}
+
+// enable database access
+include_once CFGDIR . 'database.php';
 
 class Database
 {
 
-    // specify your own database credentials
-    private $host = "example.com";
-    private $dbname = "username";
-    private $username = "username";
-    private $password = 'password';
+    private $host = "127.0.0.1";
+    private $port = 3306;
+    private $dbname = "dbname";
+    private $username = "dbUsername";
+    private $password = "dbPassword";
 
     private $conn;
 
     private $stmt = null;
 
     private $connected = false;
+
+    public function __construct()
+    {
+        global $DatabaseAccount;
+        // $DatabaseAccount["host"] = "127.0.0.1";
+        // $DatabaseAccount["port"] = 3306;
+        // $DatabaseAccount["dbname"] = "dbname";
+        // $DatabaseAccount["username"] = "username";
+        // $DatabaseAccount["password"] = "password";
+
+        // merge
+        if ($DatabaseAccount["host"] != null){
+            $this->host = $DatabaseAccount["host"];
+        }
+        if ($DatabaseAccount["port"] != null){
+            $this->port = $DatabaseAccount["port"];
+        }
+        if ($DatabaseAccount["dbname"] != null){
+            $this->dbname = $DatabaseAccount["dbname"];
+        }
+        if ($DatabaseAccount["username"] != null){
+            $this->username = $DatabaseAccount["username"];
+        }
+        if ($DatabaseAccount["password"] != null){
+            $this->password = $DatabaseAccount["password"];
+        }
+    }
 
     public function close()
     {
@@ -78,7 +106,7 @@ class Database
     {
         global $output;
         if ($this->connected == false) {
-            $this->conn = new mysqli($this->host, $this->username, $this->password, $this->dbname);
+            $this->conn = new mysqli($this->host, $this->username, $this->password, $this->dbname, $this->port);
             if ($this->conn->connect_error) {
                 $this->connected = false;
                 $output["errcode"] = 127;

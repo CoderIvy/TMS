@@ -52,7 +52,8 @@ $(document).ready(function () {
 
     $(window).resize(function () {
         // sync
-        reloadCurrentPage();
+        //TODO it comment for debug
+        // reloadCurrentPage();
     });
 
     updateSelectedDate();

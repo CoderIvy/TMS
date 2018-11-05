@@ -36,7 +36,7 @@
 <body>
     <div id="LoginPageLayerID" class="LoginPageLayer">
         <div class="LoginPage"> <br /> <br />
-            <h3>Welcome to TMS</h3><br />
+            <p class="tipsTitle">Welcome to TMS</p><br />
             <input type="text" name="email" class="loginInput" id="login_email" value="admin@example.com" placeholder="Email" />
             <br>
             <input type="password" class="loginInput" name="password" id="login_password" value="testpassword"
@@ -49,16 +49,21 @@
             <br />
             <br />
         </div>
+
         <div class="tmsTips">
-            <h4>Task Management System Functionalities</h4><br />
-            <p>1. use valid account to login & logout system</p>
-            <p>2. click 'New Job' button to create new jobs, default job status is 'unassigned', new job will be
-                update into DB</p>
-            <p>3. drag & drop job to assign job to different user or change start time, all changes will be
-                update into DB</p>
-            <p>4. drag a scheduled job to re-schedule area for unsigned</p>
-            <p>5. click 'Day' 'Week' 'Month' button to switch different pages</p>
-            <p>6. select different job status to filter out showing result, it allows multiple selection</p>
+            <p class="tipsTitle">Task Management System Functionalities</p>
+
+            <ul>
+                <li class="tipsItem"><a class="protoLink" href="image/prototype.png">prototype</a></li>
+                <li class="tipsItem">use valid account to login & logout system</li>
+                <li class="tipsItem">click 'New Job' button to create new jobs, default job status is 'unassigned', new job will be
+                    update into DB</li>
+                <li class="tipsItem">drag & drop job to assign job to different user or change start time, all changes will be
+                    update into DB</li>
+                <li class="tipsItem">drag a scheduled job to re-schedule area for unsigned</li>
+                <li class="tipsItem">click 'Day' 'Week' 'Month' button to switch different pages</li>
+                <li class="tipsItem">select different job status to filter out showing result, it allows multiple selection</li>
+            </ul>
         </div>
 
 
@@ -161,11 +166,11 @@
 
                     <div class="MidMenuItem">
                         <!--TODO click different button show different page-->
-                        <button class="SwitchBtn" style="background-color: #43B75B; color: white" id="dayBtn" onclick="showSchedule(1)">
+                        <button class="SwitchBtn" style="background-color: #43B75B; color: white" id="dayBtn" onclick="switchViews(1)">
                             Day
                         </button>
-                        <button class="SwitchBtn" id="weekBtn" onclick="showSchedule(2)">Week</button>
-                        <button class="SwitchBtn" id="monthBtn" onclick="showSchedule(3)">Month</button>
+                        <button class="SwitchBtn" id="weekBtn" onclick="switchViews(2)">Week</button>
+                        <button class="SwitchBtn" id="monthBtn" onclick="switchViews(3)">Month</button>
                     </div>
 
                     <div class="RightMenuItem">
@@ -198,11 +203,45 @@
                     <div class="dayMatrixBlock" id="dayViewLayerID">
 
                     </div>
-                    <div class="dayMatrixBlock" id="weekView" style="display: none">
+                    <div class="dayMatrixBlock" id="weekViewLayerID" style="display: none">
+                        <!--<div class="dayViewHead" id="dayViewHeadID">-->
+                            <!--<div class="viewHeadTitle">Assigned To</div>-->
+                            <!--<div class="viewHeadTitle">Monday</div>-->
+                            <!--<div class="viewHeadTitle">Tuesday</div>-->
+                            <!--<div class="viewHeadTitle">Wednesday</div>-->
+                            <!--<div class="viewHeadTitle">Thursday</div>-->
+                            <!--<div class="viewHeadTitle">Friday</div>-->
+                            <!--<div class="viewHeadTitle">Weekend</div>-->
+                        <!--</div>-->
+                        <!--<div class="viewLines">-->
+                            <!--<div class="viewOneLine">-->
+                                <!--<div class="viewUserTitle" >-->
+                                    <!--<div class="viewUserTitleImg">-->
+                                        <!--<img src="image/profile.png" class="SchedAvatar">-->
+                                    <!--</div>-->
+                                    <!--<div class="viewUserTitleText">-->
+                                        <!--<div class="maxFlexBox" style="justify-content: flex-start;align-items: center;">-->
+                                            <!--userName-->
+                                        <!--</div>-->
+                                        <!--<div class="maxFlexBoxCount" style="justify-content: flex-start;align-items: center;">-->
+                                            <!--* Jobs-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div class="viewUserTitleDel">-</div>-->
+                                <!--</div>-->
+                                <!--<div class="weekViewBox">-->
+                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 01 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
+                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 02 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
+                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 03 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
+                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 04 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
+                                <!--</div>-->
+
+                            <!--</div>-->
+                        <!--</div>-->
                         <h3 class="otherPage">weekly schedule page coming soon.....</h3>
                     </div>
 
-                    <div class="dayMatrixBlock" id="monthView" style="display: none">
+                    <div class="dayMatrixBlock" id="monthViewLayerID" style="display: none">
                         <h3 class="otherPage">monthly schedule page coming soon.....</h3>
                     </div>
 

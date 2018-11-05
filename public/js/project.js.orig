@@ -25,8 +25,6 @@ var selTs = 0;
 // 30 minutes in milliseconds
 var stepTs = 30 * 60 * 1000;
 
-var noCacheTs = new Date();
-
 // day matrix
 var maxDayCol = 11;
 
@@ -54,10 +52,10 @@ function dateTimeObjectToStringDate(d) {
 }
 
 // draw jobs matrix
-function drawDayViewJobMatrix() {
+function drawJobMatrix() {
 
     //draw scheduled joblist box
-    drawDayTableTitle();
+    drawTableTitle();
 
     // get current selected date time
     updateSelectedDate();
@@ -168,21 +166,25 @@ function drawByUID(uid) {
         return count;
     }
 
-    var jobCount = getJobCount(uid);
+    var jobCount = curUser.joblist.size;
 
     if (uid == 0) {
 
         $('#unassignedList').empty();
 
         var divID = 'unassigned_' + 0 + '_' + 0 + '_' + 0;
-        var eventHandleText = ` " draggable="false" ondragstart="return false;" ondragover="allowDrop(event);" style="background-color: #effce9;" ondrop="unassignedDrop(event)" `;
+        var eventHandleText = ` " draggable="false" ondragstart="return false;" ondragover="allowDrop(event);" ondrop="unassignedDrop(event)" `;
         var htmlTitleText = "Drop here to be unassigned";
         var divHtml = `<div title="` + htmlTitleText + eventHandleText + ` class="unassignedJob" id="` + divID + `">
                             <div `+ eventHandleText + `class="unassignedJobStatus" id="` + 'unassigned1_' + 0 + '_' + 0 + '_' + 0 + `">` + "Drop here" + `</div>
                             <div `+ eventHandleText + `class="unassignedJobTitle" id="` + 'unassigned2_' + 0 + '_' + 0 + '_' + 0 + `">` + "to unassigned" + `</div>
                             <div `+ eventHandleText + `class="unassignedJobDetail" id="` + 'unassigned3_' + 0 + '_' + 0 + '_' + 0 + `">` + "a scheduled job" + `</div>
                         </div>`;
+<<<<<<< HEAD
+        // disabled for moon
+=======
 
+>>>>>>> 9bd1f74640a9c5196e6e6367c1a5d27c29f4ad1d
         $('#unassignedList').append(divHtml);
 
         for (const jobId of curUser.joblist.keys()) {
@@ -208,35 +210,33 @@ function drawByUID(uid) {
     $("#" + userLineID).empty();
 
     // append all jobs of this user
+
     var curUsername = curUser.first_name + ' ' + curUser.last_name;
 
     // user profile
     var lineTitleID = "line_title_" + uid;
-
-    drawUserProfile(lineTitleID, userLineID, curUsername, jobCount);
-
-    // $("#" + userLineID).append(`
-    //     <div class="viewUserTitle" id="`+ lineTitleID + `">
-    //         <div class="viewUserTitleImg">
-    //             <img src="image/profile.png" class="SchedAvatar">
-    //         </div>
-    //         <div class="viewUserTitleText">
-    //             <div class="maxFlexBox" style="justify-content: flex-start;align-items: center;">
-    //                 `+ curUsername + `
-    //             </div>
-    //             <div class="maxFlexBoxCount" style="justify-content: flex-start;align-items: center;">
-    //             `+ jobCount + ` Jobs
-    //             </div>
-    //         </div>
-    //         <div class="viewUserTitleDel">-</div>
-    //     </div>`);
+    $("#" + userLineID).append(`
+        <div class="dayViewUserTitle" id="`+ lineTitleID + `">
+            <div class="dayViewUserTitleImg">
+                <img src="image/profile.png" class="SchedAvatar">
+            </div>
+            <div class="dayViewUserTitleText">
+                <div class="maxFlexBox" style="justify-content: flex-start;align-items: center;">
+                    `+ curUsername + `
+                </div>
+                <div class="maxFlexBoxCount" style="justify-content: flex-start;align-items: center;">
+                `+ jobCount + ` Jobs
+                </div>
+            </div>
+            <div class="dayViewUserTitleDel">-</div>
+        </div>`);
 
     // draw all slots in idle
     for (var col = 0; col <= maxDayCol; col++) {
         var cellID = 'pos_' + uid + '_' + col + '_0';
         $("#" + userLineID).append(`<div id="` + cellID + `" class="dayViewUserIdleBlock" draggable="false" ondragstart="return false;" ondragover="allowDrop(event);" ondrop="drop(event)">
-            <!--<br />-->
-            <!--&nbsp;-->
+            <br />
+            &nbsp;
             </div>`);
     }
 
@@ -387,7 +387,7 @@ function drawByUID(uid) {
 
             } else {
                 // duration slots
-                $('#' + idleCellID).replaceWith(`<div  title="` + htmlTitle + `" id="` + cellID + `" class="dayViewUserJobBlock" style="` + otherDivHtml + `" draggable="true" ondragover="allowDrop(event);" ondrop="drop(event)" ondragstart="drag(event)">
+                $('#' + idleCellID).replaceWith(`<div  title="` + htmlTitle + `" id="` + cellID + `" class="dayViewUserJobBlock" style="` + otherDivHtml + `" draggable="true" ondrop="return false;" ondragstart="drag(event)">
                 <br />
                 &nbsp;
                 </div>`);
@@ -414,9 +414,9 @@ function drawByUID(uid) {
 }
 
 /**
- * draw scheduled job list title for day view
+ * draw scheduled job list title
  */
-function drawDayTableTitle() {
+function drawTableTitle() {
     // clear before renew
     $('#unassignedList > div').remove();
 
@@ -425,18 +425,18 @@ function drawDayTableTitle() {
     // time title
     $('#dayViewLayerID').append(`
     <div class="dayViewHead" id="dayViewHeadID">
-        <div class="viewHeadTitle">Assigned To</div>
-        <div class="viewHeadTitle">1:00am</div>
-        <div class="viewHeadTitle">2:00am</div>
-        <div class="viewHeadTitle">3:00am</div>
-        <div class="viewHeadTitle">4:00am</div>
-        <div class="viewHeadTitle">5:00am</div>
-        <div class="viewHeadTitle">6:00am</div>
+        <div class="dayViewHeadTitle">Assigned To</div>
+        <div class="dayViewHeadTitle">1:00am</div>
+        <div class="dayViewHeadTitle">2:00am</div>
+        <div class="dayViewHeadTitle">3:00am</div>
+        <div class="dayViewHeadTitle">4:00am</div>
+        <div class="dayViewHeadTitle">5:00am</div>
+        <div class="dayViewHeadTitle">6:00am</div>
     </div>`);
 
     // user lines box
     $('#dayViewLayerID').append(`
-    <div class="viewLines" id="dayViewLinesID">
+    <div class="dayViewLines" id="dayViewLinesID">
     </div>`);
 
     // append all line for users
@@ -448,7 +448,7 @@ function drawDayTableTitle() {
 
         var userLineID = "line_" + uid;
 
-        $("#dayViewLinesID").append(`<div class="viewOneLine" id="` + userLineID + `"></div>`);
+        $("#dayViewLinesID").append(`<div class="dayViewOneLine" id="` + userLineID + `"></div>`);
 
     }
 
@@ -568,11 +568,9 @@ function allowDrop(event) {
     // check conflict
     // TODO: enable drop into same job duration 
     for (const dJob of dstUser.joblist.values()) {
-
         if (aJob.job_id === dJob.job_id) {
             continue;
         }
-
         if (start_column == dJob.start_colum) {
             setMessageBar("start column conflict(equal start) for drag & drop from " + srcDivId + " to " + destDivId, "red");
             console.log(aJob);
@@ -882,18 +880,17 @@ function setJobStatusFilter(event) {
     console.log(jobStatusFilter);
 
     // re-draw
-    drawDayViewJobMatrix();
+    drawJobMatrix();
 }
-
 
 /**
  * click different button show different pages
  * @param value
  */
-function switchViews(value) {
+function showSchedule(value) {
     var dayPage = document.getElementById("dayViewLayerID");
-    var weekPage = document.getElementById("weekViewLayerID");
-    var monthPage = document.getElementById("monthViewLayerID");
+    var weekPage = document.getElementById("weekView");
+    var monthPage = document.getElementById("monthView");
     var dayBtn = document.getElementById("dayBtn");
     var weekBtn = document.getElementById("weekBtn");
     var monthBtn = document.getElementById("monthBtn");
@@ -910,6 +907,7 @@ function switchViews(value) {
             weekBtn.style.color = "white";
             monthBtn.style.backgroundColor = "#e6e6e6";
             monthBtn.style.color = 'rgba(' + [52, 52, 52, 0.80].join(',') + ')';
+
 
             break;
         case "3":
@@ -1293,9 +1291,8 @@ function apiLogout() {
 
     setMessageBar("Logout ...", "yellow");
 
-    noCacheTs = new Date();
 
-    $.get("api.php?act=sess&subact=logout&noCacheTs=" + noCacheTs.getTime(), function (tmsdata, status) {
+    $.get("api.php?act=sess&subact=logout", function (tmsdata, status) {
         check_session(tmsdata, "previous account Logout successfully.");
     });
 }
@@ -1342,10 +1339,8 @@ function showLoginPage(showLogin) {
 function getjoblist(msg) {
 
     setMessageBar("Loading job list ...", "yellow");
-    
-    noCacheTs = new Date();
 
-    $.get("api.php?act=joblist&noCacheTs=" + noCacheTs.getTime(), function (tmsdata, status) {
+    $.get("api.php?act=joblist", function (tmsdata, status) {
 
         if (check_session(tmsdata, "Please login ...") !== 0) {
             return;
@@ -1399,9 +1394,7 @@ function getjoblist(msg) {
 
         uidList.sort();
 
-        drawDayViewJobMatrix();
-        drawWeekViewJobMatrix();
-        // drawMonthViewJobMatrix();
+        drawJobMatrix();
 
     });
 }
@@ -1590,56 +1583,6 @@ function getEndCol(duration, start_column) {
     return end_column - 1;
 }
 
-function getUserName(uid) {
-
-    var curUser = getUser(uid);
-
-    var userName =  curUser.first_name + ' ' + curUser.last_name;
-
-    return userName;
-
-}
-
-function getJobCount(uid) {
-    var curUser = getUser(uid);
-
-    var jobCount = curUser.joblist.size;
-
-    return jobCount;
-
-}
-
-function getUser(uid) {
-
-    var curUser = userInfoList.get(uid);
-    if (curUser == undefined) {
-        setMessageBar("user not found(" + uid + ") for drawByUID(" + uid + ")", "red");
-        return null;
-    }
-    return curUser;
-}
-
-
-function drawUserProfile(lineTitleID, userLineID, userName, jobCount) {
-
-    $("#" + userLineID).append(`
-        <div class="viewUserTitle" id="`+ lineTitleID + `">
-            <div class="viewUserTitleImg">
-                <img src="image/profile.png" class="SchedAvatar">
-            </div>
-            <div class="viewUserTitleText">
-                <div class="maxFlexBox" style="justify-content: flex-start;align-items: center;">
-                    `+ userName + `
-                </div>
-                <div class="maxFlexBoxCount" style="justify-content: flex-start;align-items: center;">
-                `+ jobCount + ` Jobs
-                </div>
-            </div>
-            <div class="viewUserTitleDel">-</div>
-        </div>`);
-}
-
-
 /**
  * get current div's user id, column, job_id
  * @param curDivId
@@ -1684,162 +1627,3 @@ function getNewStartTime(start_column) {
 
     return [year, month, day].join('-') + " " + hours + ":" + minutes + "." + newJobDateTime.getSeconds();
 }
-
-//----------for week view------------//
-
-/**
- * draw scheduled job list title for day view
- */
-function drawWeekTableTitle() {
-    // clear before renew
-    // $('#unassignedList > div').remove();
-
-    $('#weekViewLayerID').empty();
-
-    // time title
-    $('#weekViewLayerID').append(`
-    <div class="dayViewHead" id="weekViewHeadID">
-                            <div class="viewHeadTitle">Assigned To</div>
-                            <div class="viewHeadTitle">Monday</div>
-                            <div class="viewHeadTitle">Tuesday</div>
-                            <div class="viewHeadTitle">Wednesday</div>
-                            <div class="viewHeadTitle">Thursday</div>
-                            <div class="viewHeadTitle">Friday</div>
-                            <div class="viewHeadTitle">Weekend</div>
-                        </div>`);
-
-    // user lines box
-    $('#weekViewLayerID').append(`
-    <div class="viewLines" id="weekViewLinesID">
-    </div>`);
-
-    //append all line for users
-    for (const uid of uidList) {
-
-        if (uid == 0) {
-            continue;
-        }
-
-        var userLineID = "week_line_" + uid;
-
-        $("#weekViewLayerID").append(`<div class="viewOneLine" id="` + userLineID + `"></div>`);
-
-    }
-
-    syncLeftRightHeight();
-}
-
-// draw jobs matrix
-function drawWeekViewJobMatrix() {
-
-    //draw scheduled joblist box
-    drawWeekTableTitle();
-
-    drawWeekTableItem();
-
-
-    // get current selected date time
-    // updateSelectedDate();
-
-    // "17-10-2018 01:00"
-    // var selDateObj = dateTimeObject(selDate + " " + selTime);
-
-    // if (selDateObj == null) {
-    //     return;
-    // }
-
-    // // global uidList sort by uid
-    // uidList.sort();
-    //
-    // var count = 0;
-    //
-    // // draw unassigned jobs
-    // count += drawByUID(0);
-    //
-    // for (const uid of uidList) {
-    //
-    //     if (uid == 0) {
-    //         continue;
-    //     }
-    //
-    //     count += drawByUID(uid);
-    //
-    // }
-    //
-    // console.log("draw " + count + " job list done for " + getFunName());
-}
-
-function drawWeekTableItem() {
-    /*
-    for (const jobId of curUser.joblist.keys()) {
-            count += 1;
-            var aJob = curUser.joblist.get(jobId);
-            var divID = 'pos_' + uid + '_' + 0 + '_' + jobId;
-            var htmlTitleText = aJob.job_status + ", " + aJob.job_title + ", " + aJob.detail;
-            var divHtml = `<div title="` + htmlTitleText + `" draggable="true" ondragstart="Unassigned_drag(event)" class="unassignedJob" id="` + divID + `">
-                            <div class="unassignedJobStatus">` + aJob.job_status + `</div>
-                            <div class="unassignedJobTitle">` + aJob.job_title + `</div>
-                            <div class="unassignedJobDetail">` + aJob.detail + `</div>
-                        </div>`;
-            $('#unassignedList').append(divHtml);
-        }
-    * */
-
-    for (const curUid of uidList){
-        // user profile
-        var lineTitleID = "week_line_title_" + curUid;
-        var weekUserLineID = "week_line_" + curUid;
-        var maxWeekCol = 6;
-
-
-
-        var jobCount = getJobCount(curUid);
-        var userName =  getUserName(curUid);
-
-
-        drawUserProfile(lineTitleID, weekUserLineID, userName, jobCount);
-        // drawUserProfile(lineTitleID, weekUserLineID, curUserName, jobCount);
-
-
-        /*
-         <!--<div class="weekViewBox">-->
-                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 01 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
-                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 02 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
-                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 03 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
-                                    <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 04 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
-                                <!--</div>-->
-        * */
-
-        // draw all slots in idle
-        for (var col = 0; col < maxWeekCol; col++) {
-
-            //TODO draw job box first, append each day's job item
-            var cellID = 'weekpos_' + curUid + '_' + col + '_0';
-            $("#" + weekUserLineID).append(`<div id="` + cellID + `" class="weekViewBox">
-                <!--<div class="weekViewItem">&bull;&nbsp;&nbsp;Job 01 ~~~~~~~~~~~~~~~~~~~~~~</div>-->
-            </div>`);
-
-            // $("#" + weekUserLineID).append(`<div id="` + cellID + `" class="weekViewBox">
-            //     <div class="weekViewItem">&bull;&nbsp;&nbsp;Job 01 ~~~~~~~~~~~~~~~~~~~~~~</div>
-            // </div>`);
-        }
-
-    }
-
-}
-
-
-
-//----------end of week view layout------------//
-
-
-//----------for month view layout------------//
-
-// draw jobs matrix
-function drawMonthViewJobMatrix() {
-
-}
-
-
-
-//----------end of month view layout------------//

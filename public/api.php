@@ -9,7 +9,6 @@
  * 5. own job can be move delay half hour or 1 hour
  */
 
-
 // by default api output in JSON
 header("Content-type: application/json; charset=utf-8");
 
@@ -82,6 +81,13 @@ if ((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on') && (isset($_SERVER
     done();
 }
 
+$noCacheTs = "NA";
+if (isset($_GET["noCacheTs"])) {
+    $noCacheTs = $_GET["noCacheTs"];
+}
+
+header("X-noCacheTs: " . $noCacheTs);
+
 //for debug
 if ($action === "phpinfo") {
     // do not initialize database for phpinfo();
@@ -92,7 +98,7 @@ if ($action === "phpinfo") {
 }
 
 // enable database access
-include_once CFGDIR . 'database.php';
+include_once LIBDIR . 'database.php';
 
 // always check session
 include_once LIBDIR . "session.php";
@@ -126,7 +132,6 @@ switch ($action) {
         include_once LIBDIR . "updatejob.php";
         done();
         break;
-
 
     case 'index':
         done();

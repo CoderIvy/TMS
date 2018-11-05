@@ -487,7 +487,7 @@ body {
     align-items: flex-end;
 }
 
-.dayViewHeadTitle {
+.viewHeadTitle {
     display: flex;
     flex: 0 0 14.26%;
     border-right: 1px solid #e6e6e6;
@@ -505,7 +505,7 @@ body {
     align-items: flex-start;
 }
 
-.dayViewOneLine {
+.viewOneLine {
     display: flex;
     border-bottom: 1px solid #e6e6e6;
     width: 100%;
@@ -526,7 +526,7 @@ body {
     display: flex;
     width: 100%;
     height: 100%;
-    font-size: small;
+    font-size: 0.8vw;
     font-weight: bold;
     position: relative;
     color: rgba(52, 52, 52, 0.80);
@@ -537,12 +537,12 @@ body {
     display: flex;
     width: 100%;
     height: 100%;
-    font-size: smaller;
+    font-size: 0.7vw;
     position: relative;
     color: rgba(52, 52, 52, 0.80);
 }
 
-.dayViewUserTitle {
+.viewUserTitle {
     display: flex;
     flex: 0 0 14.26%;
     border-right: 1px solid #e6e6e6;
@@ -553,7 +553,7 @@ body {
     align-items: flex-start;
 }
 
-.dayViewUserTitleImg {
+.viewUserTitleImg {
     display: flex;
     height: fit-content;
     width: 15%;
@@ -572,7 +572,7 @@ body {
     display: flex;
 }
 
-.dayViewUserTitleText {
+.viewUserTitleText {
     display: inline-flex;
     height: fit-content;
     top: 10%;
@@ -585,7 +585,7 @@ body {
     font-size: 110%;
 }
 
-.dayViewUserTitleDel{
+.viewUserTitleDel{
     display: inline-flex;
     height: fit-content;
     top: 5%;
@@ -776,18 +776,18 @@ body {
 
 #jobsBtn{
     border: 0px solid;
-    margin-top: 15px;
-    margin-right: 5px;
+    margin-top: 5%;
+    margin-right: 0.1%;
     font-size: medium;
     opacity: 0.6;
     background-color: white;
 }
 
 #clockIcon{
-    width: 24px;
-    height: 24px;
-    margin-top: 15px;
-    margin-left: 2px;
+    width: 12%;
+    height: 12%;
+    margin-top: 5%;
+    margin-left: 3%;
 }
 
 .leftSched{
@@ -797,14 +797,14 @@ body {
 
 #leftSchedText{
     text-align: center;
-    margin-left: 10px;
-    margin-top: 20px;
+    margin-top: 5%;
+    margin-left: 6%;
 }
 
 #leftSchedCount{
     text-align: right;
-    margin-left: 60px;
-    margin-top: 20px;
+    margin-left: 50%;
+    margin-top: 5%;
     color: rgba(52, 52, 52, 0.80);
 }
 
@@ -976,7 +976,7 @@ hr {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgb(194, 178, 178);
+    background-color: #e6e6e6;
     padding: 0;
     z-index: 90;
 }
@@ -1022,7 +1022,7 @@ hr {
     width: 40%;
     position: relative;
     margin-top: 5%;
-    margin-bottom: 5%;
+    margin-bottom: 2%;
     background-color: lightgray;
     align-items: center;
     height: max-content;
@@ -1038,6 +1038,15 @@ hr {
     height: max-content;
     width: max-content;
     flex-direction: column;
+}
+
+.tipsTitle{
+    font-size: 2vw;
+}
+
+.tipsItem{
+    font-size: 1vw;
+    margin-bottom: 0.8%;
 }
 
 .otherPage {
@@ -1067,4 +1076,41 @@ hr {
     display: flex;
     width: 15vw;
     height: 15vw;
+}
+
+.protoLink{
+    font-size: 1.5vw;
+    /*align-self: flex-end;*/
+}
+
+.weekViewBox {
+    display: flex;
+    width: 14.26%;
+    flex: 0 0 14.26%;
+    border-right: 1px solid #e6e6e6;
+    height: 100%;
+    flex-direction: column;
+    /*padding-left: 0.2%;*/
+    /*position: relative;*/
+    /*justify-content: flex-start;*/
+    /*align-items: flex-start;*/
+}
+
+.weekView{
+    padding-left: 10%;
+}
+
+.weekViewItem{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 0 30%;
+    width: 100%;
+    height: 15%;
+    padding-left: 5%;
+    padding-top: 5%;
+    /*position: relative;*/
+    /*justify-content: flex-start;*/
+    font-size: 0.8vw;
+
 }
